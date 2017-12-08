@@ -1,0 +1,210 @@
+SQL - not case sensitive
+conditiong -  case sensitive 
+
+Query - retrieving data from database/ not modifying(adding deleting) data
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+1. SELECT
+The SELECT statement is used to select data from a database. The data returned is stored in a result table, called the result-set.
+The SELECT DISTINCT statement is used to return only distinct (different) values. Inside a table, a column often contains many duplicate values; and sometimes you only want to list the different (distinct) values. The SELECT DISTINCT statement is used to return only distinct (different) values.
+
+A. Syntax
+a. SELECT column1, column2, ...    FROM     table_name;
+b. SELECT DISTINCT column1, column2,  FROM  table_name;
+
+B. Examples
+SELECT DISTINCT City FROM Customers;
+SELECT DISTINCT Country FROM Customers;
+SELECT DISTINCT COUNTRY,CITY FROM Customers;
+
+SELECT COUNT(Country) FROM Customers;
+SELECT COUNT(DISTINCT Country) FROM Customers; SELECT Count(*) AS DistinctCountries FROM (SELECT DISTINCT Country FROM Customers);
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+2. WHERE
+The WHERE clause is used to filter records.
+The WHERE clause is used to extract only those records that fulfill a specified condition.
+
+A. Syntax
+SELECT column1, column2, ... FROM table_name WHERE condition;
+
+B. Examples
+SELECT * FROM Customers WHERE CustomerID=1;
+SELECT * FROM Customers WHERE Country='Mexico';
+
+C. Operators in WHERE Clause
+Operator	Description
+=	Equal
+<>	Not equal. Note: In some versions of SQL this operator may be written as !=
+>	Greater than
+<	Less than
+>=	Greater than or equal
+<=	Less than or equal
+BETWEEN	Between an inclusive range
+LIKE	Search for a pattern
+IN	To specify multiple possible values for a column
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+3. AND, OR and NOT Operators
+The WHERE clause can be combined with AND, OR, and NOT operators.
+The AND and OR operators are used to filter records based on more than one condition:
+The AND operator displays a record if all the conditions separated by AND is TRUE.
+The OR operator displays a record if any of the conditions separated by OR is TRUE.
+The NOT operator displays a record if the condition(s) is NOT TRUE.
+
+A. Syntax
+SELECT column1, column2, ... FROM table_name WHERE condition1 AND condition2 AND condition3 ...;
+SELECT column1, column2, ... FROM table_name WHERE condition1 OR condition2 OR condition3 ...;
+SELECT column1, column2, ... FROM table_name WHERE NOT condition;
+
+B. Examples
+SELECT * FROM Customers WHERE Country='Germany' AND City='Berlin';
+SELECT * FROM Customers WHERE City='Berlin' OR City='München';
+SELECT * FROM Customers WHERE NOT Country='Germany';
+
+SELECT * FROM Customers WHERE Country='Germany' AND (City='Berlin' OR City='München');
+SELECT * FROM Customers WHERE NOT Country='Germany' AND NOT Country='USA';
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+14. IN Operator
+The IN operator allows you to specify multiple values in a WHERE clause.
+The IN operator is a shorthand for multiple OR conditions.
+
+A. Syntax
+SELECT column_name(s) FROM table_name WHERE column_name IN (value1, value2, ...);
+SELECT column_name(s) FROM table_name WHERE column_name IN (SELECT STATEMENT);
+
+B. Examples
+SELECT * FROM Customers WHERE Country IN ('Germany', 'France', 'UK');
+SELECT * FROM Customers WHERE Country NOT IN ('Germany', 'France', 'UK');
+SELECT * FROM Customers WHERE Country IN (SELECT Country FROM Suppliers);
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+15. BETWEEN Operator
+The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
+The BETWEEN operator is inclusive: begin and end values are included.
+
+A. Syntax
+SELECT column_name(s) FROM table_name WHERE column_name BETWEEN value1 AND value2;
+
+B. Examples
+SELECT * FROM Products WHERE Price BETWEEN 10 AND 20;
+SELECT * FROM Products WHERE Price NOT BETWEEN 10 AND 20;
+SELECT * FROM Products WHERE (Price BETWEEN 10 AND 20) AND CategoryID NOT IN (1,2,3);
+== SELECT * FROM Products WHERE (Price BETWEEN 10 AND 20) AND NOT CategoryID IN (1,2,3);
+SELECT * FROM Products WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni' ORDER BY ProductName;
+SELECT * FROM Products WHERE ProductName NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni' ORDER BY ProductName;
+SELECT * FROM Orders WHERE OrderDate BETWEEN #07/04/1996# AND #07/09/1996#;
+- selects all orders with an OrderDate BETWEEN '04-July-1996' and '09-July-1996'.
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+6. NULL Value
+A field with a NULL value is a field with no value. If a field in a table is optional, it is possible to insert a new record or update a record without adding a value to this field. Then, the field will be saved with a NULL value.
+***It is very important to understand that a NULL value is different from a zero value or a field that contains spaces. A field with a NULL value is one that has been left blank during record creation!
+
+A. IS NULL, IS NOT NULL Syntax
+SELECT column_names FROM table_name WHERE column_name IS NULL;
+SELECT column_names FROM table_name WHERE column_name IS NOT NULL;
+
+B. Examples
+SELECT LastName, FirstName, Address FROM Persons WHERE Address IS NULL;
+SELECT LastName, FirstName, Address FROM Persons WHERE Address IS NOT NULL;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+12. LIKE operator
+The LIKE operator is used in a WHERE clause to search for a specified pattern in a column.
+There are two wildcards used in conjunction with the LIKE operator:
+%  The percent sign represents zero, one, or multiple characters
+_  The underscore represents a single character
+***Note: MS Access uses a question mark (?) instead of the underscore (_).
+
+A. Syntax
+SELECT column1, column2, ... FROM table_name WHERE columnN LIKE pattern;
+SELECT column1, column2, ... FROM table_name WHERE columnN NOT LIKE pattern;
+
+*** Wildcard:
+LIKE Operator					Description
+WHERE CustomerName LIKE 'a%'	Finds any values that starts with "a"
+WHERE CustomerName LIKE '%a'	Finds any values that ends with "a"
+WHERE CustomerName LIKE '%or%'	Finds any values that have "or" in any position
+WHERE CustomerName LIKE '_r%'	Finds any values that have "r" in the second position
+WHERE CustomerName LIKE 'a_%_%'	Finds any values that starts with "a" and are at least 3 characters in length
+WHERE ContactName LIKE 'a%o'	Finds any values that starts with "a" and ends with "o"
+
+B. Examples
+SELECT * FROM Customers WHERE CustomerName LIKE '_r%';
+SELECT * FROM Customers WHERE CustomerName LIKE 'a_%_%';
+SELECT * FROM Customers WHERE ContactName LIKE 'a%o';
+SELECT * FROM Customers WHERE CustomerName NOT LIKE 'a%';
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+16. Aliases
+SQL aliases are used to give a table, or a column in a table, a temporary name.
+Aliases are often used to make column names more readable. An alias only exists for the duration of the query.
+Aliases can be useful when:
+* There are more than one table involved in a query
+* Functions are used in the query
+* Column names are big or not very readable
+* Two or more columns are combined together
+
+A. Syntax
+SELECT column_name AS alias_name FROM table_name;
+SELECT column_name(s) FROM table_name AS alias_name;
+
+B. Examples
+SELECT CustomerID as ID, CustomerName AS Customer FROM Customers;
+SELECT CustomerName AS Customer, ContactName AS [Contact Person] FROM Customers;
+*** Note: It requires double quotation marks or square brackets if the alias name contains spaces.
+SELECT CustomerName, Address + ', ' + PostalCode + ' ' + City + ', ' + Country AS Address FROM Customers;
+- creates an alias named "Address" that combine four columns (Address, PostalCode, City and Country)
+SELECT CustomerName, CONCAT(Address,', ',PostalCode,', ',City,', ',Country) AS Address FROM Customers;
+*** Note: To get the SQL statement above to work in MySQL use the following
+SELECT o.OrderID, o.OrderDate, c.CustomerName FROM Customers AS c, Orders AS o WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
+- selects all the orders from the customer with CustomerID=4 (Around the Horn). We use the "Customers" and "Orders" tables, and give them the table aliases of "c" and "o" respectively (Here we use aliases to make the SQL shorter)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+17. PIPES || - ORACLE SQL
+
+B. Examples
+
+SELECT 'HELLO MY NAME IS '|| ENAME FROM EMP;
+
+'HELLOMYNAMEIS'||ENAME
+
+HELLO MY NAME IS KING 
+HELLO MY NAME IS BLAKE 
+HELLO MY NAME IS CLARK 
+HELLO MY NAME IS JONES 
+
+SELECT 'HELLO MY NAME IS '|| ENAME AS "CONCATENATED VALUE" FROM EMP
+where job = 'MANAGER'
+
+CONCATENATED VALUE
+
+HELLO MY NAME IS BLAKE 
+HELLO MY NAME IS CLARK 
+HELLO MY NAME IS JONES 
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+4. Order by
+The ORDER BY keyword is used to sort the result-set in ascending or descending order.
+The ORDER BY keyword sorts the records in ascending order by default. To sort the records in descending order, use the DESC keyword.
+
+A. Syntax
+SELECT column1, column2, ... FROM table_name ORDER BY column1, column2, ... ASC|DESC;
+
+B. Examples
+SELECT * FROM Customers ORDER BY Country;
+SELECT * FROM Customers ORDER BY Country, CustomerName;
+SELECT * FROM Customers ORDER BY Country ASC, CustomerName DESC;
+SELECT * FROM Customers ORDER BY Country desc, CustomerName asc;

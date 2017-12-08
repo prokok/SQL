@@ -1,0 +1,689 @@
+SingleRowFunctions(SRFs)
+- Act on one row at a time AND gives an output for each row
+- can be used at SELECT CLAUSE and WHERE CLUASE
+
+STRING FUCNTIONS : CONCAT, UPPER, LOWER, INITCAP, LENGTH, SUBSTR, LPAD, RPAD, LTRIM, RTRIM
+NUMERIC FUNCTIONS : ROUND, TRUNC
+DATES/TIME FUNCTIONS : SYSDATE, SYSTIMESTAMP, ADD_MONTHS, MONTHS_BETWEEN, TRUNC, TO_CHAR, TO_DATE 
+NULL/NULLIF FUNCTIONS : NVL, NULLIF  
+
+https://www.techonthenet.com/oracle/index.php 
+
+
+==============================================================================================================================================
+=============================================<STRING FUNCTIONS>==============================================================================
+-----------------------------------------------------------------------------------------------------------------------------------
+
+1. CONCAT (CONCATENATED) - ONLY TAKES 2 operands in Oracle SQL....
+
+select concat(lower(ename),' is the name') from emp;
+select concat(lower(ename), upper(' is the name')) from emp where deptno = 20; 
+select concat(concat( lower(ename), upper(' is the name')), concat(' and their job is: ', JOB)) as "function call" from emp
+SELECT CONCAT('MY NAME IS ' ENAME)
+SELECT 'MY NAME IS ' || ENAME    
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+2. UPPER - UPPERCASING/LOWER - lowercasing
+
+SELECT UPPER('HELLO') FROM EMP;
+
+***repeating HELLO as many as the rows in the emp because it is single row function
+'HELLO'
+
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+HELLO 
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+3. Dual table(=dummy table)
+
+select * from DUAL
+DUMMY
+X 
+
+select upper('hello') from DUAL
+UPPER('HELLO')
+HELLO 
+
+select 'pizza' as FOOD, 'fanta' from dual
+FOOD      'FANTA'
+pizza     fanta 
+
+select 'pizza' as FOOD, 'fanta' as drink from dual
+FOOD      DRINK
+pizza     fanta 
+
+select 'pizza' as FOOD, 'fanta' as drink, concat('hello',' John') from dual
+FOOD    DRINK     CONCAT('HELLO','JOHN')
+pizza   fanta     hello John 
+
+select 'pizza' as FOOD, 'fanta' as drink, concat('hello',' John') AS "THIS IS A FUNC" from dual
+FOOD     DRINK    THIS IS A FUNC
+pizza    fanta    hello John 
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+4. Composition of functions
+
+select lower(ename) from emp;
+select concat(lower(ename),' is the name') from emp;
+select concat(lower(ename), upper(' is the name')) from emp where deptno = 20; 
+select concat(concat( lower(ename), upper(' is the name')), concat(' and their job is: ', JOB)) as "function call" from emp
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+5. INITCAP
+INICAP function is used to capitalizes initial letter of every word in the character sequence
+
+A. Syntax
+SELECT INITCAP() FROM table_name
+
+B. Examples
+SELECT INITCAP('hello my name is imtiaz') FROM DUAL
+INITCAP('HELLOMYNAMEISIMTIAZ')
+Hello My Name Is Imtiaz
+
+SENTENCE
+SELECT INITCAP('hello my name is imtiaz') AS SENTENCE FROM DUAL
+Hello My Name Is Imtiaz
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+6. LENGTH
+LENGTH function is used to count the number of letters in a string/sequnece.
+
+A. Syntax
+SELECT LENGTH(column_name) FROM table_name
+
+B. Example
+SELECT LENGTH('hello my name is imtiaz') AS LENGTH FROM Dual;
+LENGTH
+23
+
+SELECT LENGTH(ENAME) AS LENGTH FROM EMP;
+LENGTH
+4
+5
+5
+5
+5
+4
+5
+5
+4
+6
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+7. SUBSTR
+SUBSTR function is used to extract parts of a string(column, word, sentence).
+
+A. Syntax
+SELECT SUBSTR( character string(colun_names, sentence, words), starting_position, number_characters_extract) FROM table_name
+
+B. Example
+SUBSTR('HELLO',2,2)
+SELECT SUBSTR('hello', 2, 2) FROM Dual;
+el
+
+SELECT SUBSTR('hello', 2) FROM Dual;
+ello
+***without the last argument(number_character_extract), SUBSTR will give all the characters from the starting position
+
+SELECT 'Hello my name is', substr('Hello my name is', 10, 5) from dual;
+'HELLOMYNAMEIS'	        SUBSTR('HELLOMYNAMEIS',10,5)
+Hello my name is	      name
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+8. LPAD, RPAD
+LPAD function is used to ADD characters to the left of given string.
+RPAD function is used to ADD characters to the right of given string.
+
+A. Syntax
+LPAD(character_string(column_names, senetence, words), number_total_string_after_padding_added, actual_character_used_for_padding)
+RPAD(character_string(column_names, senetence, words), number_total_string_after_padding_added, actual_character_used_for_padding)
+SELECT LAPD() FROM table_name
+SELECT RAPD() FROM table_name
+
+B. Example
+SELECT LPAD('hello',10,'&') FROM DUAL
+LPAD('HELLO',10,'&')
+&&&&&hello
+
+SELECT LPAD('hello',100,'&') FROM DUAL
+LPAD('HELLO',100,'&')
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&hello
+
+SELECT RPAD('hello',100,'&') FROM DUAL  
+RPAD('HELLO',100,'&')
+hello&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+9. LTRIM, RTRIM
+LTRIM function is used to TRIM characters to the left of given string.
+RTRIM function is used to TRIM characters to the right of given string.
+
+A. Syntax
+LTRIM(character_string(column_names, senetence, words), actual_character_used_for_TRIM)
+RTRIM(character_string(column_names, senetence, words), actual_character_used_for_TRIM)
+SELECT LTRIM() FROM table_name
+SELECT RTRIM() FROM table_name
+
+B. Example
+
+SELECT LTRIM('HELLO','H') FROM DUAL
+LTRIM('HELLO','H')
+ELLO
+
+SELECT LTRIM('HELLOHHHHHH','H') FROM DUAL
+LTRIM('HELLOHHHHHH','H')
+ELLOHHHHHH
+
+SELECT LTRIM('HHHHHHELLOHHHHHH','H') FROM DUAL
+LTRIM('HHHHHHELLOHHHHHH','H')
+ELLOHHHHHH
+
+SELECT RTRIM('HHHHHHELLOHHHHHH','H') FROM DUAL
+RTRIM('HHHHHHELLOHHHHHH','H')
+HHHHHHELLO
+
+LTRIM( '637Tech', '0123456789')
+Result: 'Tech'
+***It actually removes the individual occurrences of 'x', 'y', and 'z', as opposed to the pattern of 'xyz'.
+LTRIM('xxyyxzyxyyxTech', 'xyz')
+Result: 'Tech'
+***every number combination from 0 to 9 has been listed in the trim_string parameter. By doing this, it does not matter the order that the numbers appear in string1, all leading numbers will be removed by the LTRIM function.
+
+==============================================================================================================================================
+=============================================<NUMERIC FUNCTIONS>==============================================================================
+
+10. ROUND
+ROUND function returns a number rounded to a certain number of decimal places.
+
+A. Syntax 
+ROUND( number, decimal_places)
+
+Parameters or Arguments
+- number : the number to round.
+- decimal_places : Optional. The number of decimal places rounded to. This value must be an integer. If this parameter is omitted, the ROUND function will round the number to 0 decimal places.
+
+B. Examples
+ROUND(125.315)
+Result: 125
+
+ROUND(125.315, 0)
+Result: 125
+
+ROUND(125.315, 1)
+Result: 125.3
+
+ROUND(125.315, 2)
+Result: 125.32
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+11. TRUNC
+TRUNC function returns a number truncated to a certain number of decimal places.
+
+A. Syntax (with numbers)
+TRUNC( number, decimal_places)
+number: The number to truncate.
+decimal_places : Optional. The number of decimal places to truncate to. This value must be an integer. If this parameter is omitted, the TRUNC function will truncate the number to 0 decimal places.
+
+B. Example:
+
+TRUNC(125.815)
+Result: 125
+
+TRUNC(125.815, 0)
+Result: 125
+
+TRUNC(125.815, 1)
+Result: 125.8
+
+==============================================================================================================================================
+=============================================<DATES AND TIMES FUNCTIONS>==============================================================================
+
+1. SYSDATE
+SYSDATE function returns the current system date and time on your local database.
+
+A. Syntax
+SYSDATE
+There are no parameters or arguments for the SYSDATE function.
+
+B. Example:
+SELECT SYSDATE
+INTO v_date
+FROM dual;
+The variable called v_date will now contain the date and time at the moment the command is executed.
+
+SELECT ENAME, SYSDATE FROM EMP WHERE JOB = 'MANAGER';
+ENAME	  SYSDATE
+BLAKE	  12/08/2017
+CLARK	  12/08/2017
+JONES	  12/08/2017
+
+ 
+SELECT ENAME, TO_CHAR(SYSDATE, 'yyyy/mm/dd') FROM EMP WHERE JOB = 'MANAGER';
+ENAME	TO_CHAR(SYSDATE,'YYYY/MM/DD')
+BLAKE	2017/12/08
+CLARK	2017/12/08
+JONES	2017/12/08
+***In order to extract the date portion only, you could use the TO_CHAR function.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+2. SYSTIMESTAMP
+SYSTIMESTAMP function returns the current system date and time (including fractional seconds and time zone) on your local database.
+
+A.Syntax
+SYSTIMESTAMP
+
+B.Example
+SELECT SYSTIMESTAMP
+INTO v_time
+FROM dual;
+The variable called v_time will now contain the date and time (including fractional seconds and time zone) at the moment the command is executed.
+
+SELECT TO_CHAR(SYSTIMESTAMP, 'SSSS.FF')
+FROM dual;
+TO_CHAR(SYSTIMESTAMP,'SSSS.FF')
+5151.160168
+
+SELECT ENAME, SYSTIMESTAMP
+FROM EMP
+WHERE JOB = 'MANAGER';
+ENAME	  SYSTIMESTAMP
+BLAKE	  08-DEC-17 09.29.36.182160 PM +00:00
+CLARK	  08-DEC-17 09.29.36.182160 PM +00:00
+JONES	  08-DEC-17 09.29.36.182160 PM +00:00
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+3. ADD_MONTHS
+ADD_MONTHS function returns a date with a specified number of months added.
+
+A. Syntax
+ADD_MONTHS( date1, number_months )
+date1 - The starting date (before the n months have been added).
+number_months - The number of months to add to date1.
+Returns - The ADD_MONTHS function returns a date value.
+
+B. Example
+ADD_MONTHS('01-Aug-03', 3)
+Result: '01-Nov-03'
+
+ADD_MONTHS('01-Aug-03', -3)
+Result: '01-May-03'
+
+ADD_MONTHS('21-Aug-03', -3)
+Result: '21-May-03'
+
+ADD_MONTHS('31-Jan-03', 1)
+Result: '28-Feb-03'
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+4. MONTHS_BETWEEN
+MONTHS_BETWEEN function returns the number of months between date1 and date2.
+
+A. Syntax
+MONTHS_BETWEEN( date1, date2 )
+date1 - The first date used to calculate the number of months between.
+date2 - The second date used to calculate the number of months between.
+Returns - The MONTHS_BETWEEN function returns a numeric value.
+
+B. Examples
+
+MONTHS_BETWEEN (TO_DATE ('2003/01/01', 'yyyy/mm/dd'), TO_DATE ('2003/03/14', 'yyyy/mm/dd') )
+would return -2.41935483870968
+
+MONTHS_BETWEEN (TO_DATE ('2003/07/01', 'yyyy/mm/dd'), TO_DATE ('2003/03/14', 'yyyy/mm/dd') )
+would return 3.58064516129032
+
+MONTHS_BETWEEN (TO_DATE ('2003/07/02', 'yyyy/mm/dd'), TO_DATE ('2003/07/02', 'yyyy/mm/dd') )
+would return 0
+
+MONTHS_BETWEEN (TO_DATE ('2003/08/02', 'yyyy/mm/dd'), TO_DATE ('2003/06/02', 'yyyy/mm/dd') )
+would return 2
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+5. TRUNC
+TRUNC function returns a date truncated to a specific unit of measure.
+
+A. Syntax (with dates)
+TRUNC ( date , format)
+date - The date to truncate.
+format - Optional. The unit of measure to apply for truncating. If the format parameter is omitted, the TRUNC function will truncate the date to the day value, so that any hours, minutes, or seconds will be truncated off. It can be one of the following values:
+  Unit	Valid format parameters
+  Year	SYYYY, YYYY, YEAR, SYEAR, YYY, YY, Y
+  ISO Year	IYYY, IY, I
+  Quarter	Q
+  Month	MONTH, MON, MM, RM
+  Week	WW
+  IW	IW
+  W	W
+  Day	DDD, DD, J
+  Start day of the week	DAY, DY, D
+  Hour	HH, HH12, HH24
+  Minute	MI
+Returns - The TRUNC function (as it applies to dates) returns a date value.
+
+B. Example - with dates
+
+TRUNC(TO_DATE('22-AUG-03'), 'YEAR')
+Result: '01-JAN-03'
+
+TRUNC(TO_DATE('22-AUG-03'), 'Q')
+Result: '01-JUL-03'
+
+TRUNC(TO_DATE('22-AUG-03'), 'MONTH')
+Result: '01-AUG-03'
+
+SELECT ENAME, HIREDATE, TRUNC(HIREDATE, 'YEAR') FROM EMP
+ENAME	HIREDATE	TRUNC(HIREDATE,'YEAR')
+KING	11/17/1981	01/01/1981
+BLAKE	05/01/1981	01/01/1981
+CLARK	06/09/1981	01/01/1981
+JONES	04/02/1981	01/01/1981
+SCOTT	12/09/1982	01/01/1982
+FORD	12/03/1981	01/01/1981
+SMITH	12/17/1980	01/01/1980
+ALLEN	02/20/1981	01/01/1981
+WARD	02/22/1981	01/01/1981
+MARTIN	09/28/1981	01/01/1981
+
+SELECT ENAME, HIREDATE, TRUNC(HIREDATE, 'YEAR') FROM EMP WHERE TRUNC(HIREDATE, 'YEAR') = '01/01/1982';
+ENAME 	   HIREDATE	    TRUNC(HIREDATE,'YEAR')
+SCOTT 	   12/09/1982	  01/01/1982
+MILLER  	 01/23/1982	  01/01/1982
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+6. TO_CHAR
+TO_CHAR function converts a number or date to a string.
+
+A. Syntax
+TO_CHAR( value [, format_mask] [, nls_language] )
+value - A number or date that will be converted to a string.
+format_mask - Optional. This is the format that will be used to convert value to a string. 
+nls_language - Optional. This is the nls language used to convert value to a string.
+Returns - The TO_CHAR function returns a string value.
+
+B. Example
+
+TO_CHAR(1210.73, '9999.9')
+Result: ' 1210.7'
+
+TO_CHAR(-1210.73, '9999.9')
+Result: '-1210.7'
+
+TO_CHAR(1210.73, '9,999.99')
+Result: ' 1,210.73'
+
+TO_CHAR(1210.73, '$9,999.00')
+Result: ' $1,210.73'
+
+TO_CHAR(21, '000099')
+Result: ' 000021'
+
+Examples with Dates
+
+Parameter	  Explanation
+YEAR	      Year, spelled out
+YYYY	      4-digit year
+YYY
+YY
+Y           Last 3, 2, or 1 digit(s) of year.
+IYY
+IY
+I           Last 3, 2, or 1 digit(s) of ISO year.
+IYYY	      4-digit year based on the ISO standard
+Q	          Quarter of year (1, 2, 3, 4; JAN-MAR = 1).
+MM	        Month (01-12; JAN = 01).
+MON         Abbreviated name of month.
+MONTH	      Name of month, padded with blanks to length of 9 characters.
+RM	        Roman numeral month (I-XII; JAN = I).
+WW	        Week of year (1-53) where week 1 starts on the first day of the year and continues to the seventh day of the year.
+W	          Week of month (1-5) where week 1 starts on the first day of the month and ends on the seventh.
+IW	        Week of year (1-52 or 1-53) based on the ISO standard.
+D	          Day of week (1-7).
+DAY	        Name of day.
+DD	        Day of month (1-31).
+DDD	        Day of year (1-366).
+DY	        Abbreviated name of day.
+J	          Julian day; the number of days since January 1, 4712 BC.
+HH	        Hour of day (1-12).
+HH12	      Hour of day (1-12).
+HH24	      Hour of day (0-23).
+MI	        Minute (0-59).
+SS	        Second (0-59).
+SSSSS	      Seconds past midnight (0-86399).
+FF	        Fractional seconds.
+
+
+TO_CHAR(sysdate, 'yyyy/mm/dd')
+Result: '2003/07/09'
+
+TO_CHAR(sysdate, 'Month DD, YYYY')
+Result: 'July 09, 2003'
+
+TO_CHAR(sysdate, 'FMMonth DD, YYYY')
+Result: 'July 9, 2003'
+
+TO_CHAR(sysdate, 'MON DDth, YYYY')
+Result: 'JUL 09TH, 2003'
+
+  TO_CHAR(sysdate, 'FMMON DDth, YYYY')
+Result: 'JUL 9TH, 2003'
+
+TO_CHAR(sysdate, 'FMMon ddth, YYYY')
+Result: 'Jul 9th, 2003'
+You will notice that in some TO_CHAR function examples, the format_mask parameter begins with "FM". 
+This means that zeros and blanks are suppressed. This can be seen in the examples below.
+
+TO_CHAR(sysdate, 'FMMonth DD, YYYY')
+Result: 'July 9, 2003'
+
+TO_CHAR(sysdate, 'FMMON DDth, YYYY')
+Result: 'JUL 9TH, 2003'
+
+TO_CHAR(sysdate, 'FMMon ddth, YYYY')
+Result: 'Jul 9th, 2003'
+The zeros have been suppressed so that the day component shows as "9" as opposed to "09".
+
+Frequently Asked Questions
+Question: Why doesn't this sort the days of the week in order?
+SELECT ename, hiredate, TO_CHAR((hiredate),'fmDay') "Day"
+FROM emp
+ORDER BY "Day";
+Answer: In the above SQL, the fmDay format mask used in the TO_CHAR function will return the name of the Day and not the numeric value of the day.
+
+To sort the days of the week in order, you need to return the numeric value of the day by using the fmD format mask as follows:
+
+SELECT ename, hiredate, TO_CHAR((hiredate),'fmD') "Day"
+FROM emp
+ORDER BY "Day";
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+7. TO_DATE
+TO_DATE function converts a string to a date.
+
+A. Syntax
+TO_DATE( string1 [, format_mask] [, nls_language] )
+string1 - The string that will be converted to a date.
+format_mask - Optional. This is the format that will be used to convert string1 to a date. It can be one or a combination of the following values:
+
+Parameter	      Explanation
+YEAR	          Year, spelled out
+YYYY	          4-digit year
+YYY
+YY
+Y	              Last 3, 2, or 1 digit(s) of year.
+IYY
+IY
+I               Last 3, 2, or 1 digit(s) of ISO year.
+IYYY	          4-digit year based on the ISO standard
+RRRR	          Accepts a 2-digit year and returns a 4-digit year.
+                A value between 0-49 will return a 20xx year.
+                A value between 50-99 will return a 19xx year.
+Q               Quarter of year (1, 2, 3, 4; JAN-MAR = 1).
+MM	            Month (01-12; JAN = 01).
+MON	            Abbreviated name of month.
+MONTH	          Name of month, padded with blanks to length of 9 characters.
+RM	            Roman numeral month (I-XII; JAN = I).
+WW	            Week of year (1-53) where week 1 starts on the first day of the year and continues to the seventh day of the year.
+W	              Week of month (1-5) where week 1 starts on the first day of the month and ends on the seventh.
+IW	            Week of year (1-52 or 1-53) based on the ISO standard.
+D	              Day of week (1-7).
+DAY	            Name of day.
+DD	            Day of month (1-31).
+DDD	            Day of year (1-366).
+DY            	Abbreviated name of day.
+J	              Julian day; the number of days since January 1, 4712 BC.
+HH            	Hour of day (1-12).
+HH12          	Hour of day (1-12).
+HH24          	Hour of day (0-23).
+MI            	Minute (0-59).
+SS            	Second (0-59).
+SSSSS	          Seconds past midnight (0-86399).
+AM, A.M., PM, or P.M.	    Meridian indicator
+AD or A.D	                AD indicator
+BC or B.C.	              BC indicator
+TZD	                      Daylight savings information. For example, 'PST'
+TZH	                      Time zone hour.
+TZM	                      Time zone minute. 
+TZR	                      Time zone region.
+
+nls_language - Optional. This is the nls language used to convert string1 to a date.
+Returns - The TO_DATE function returns a date value.
+
+B. Example:
+
+SELECT ADD_MONTHS(TO_DATE('2012-08-27','YYYY-MM-DD'),2) FROM DUAL
+ADD_MONTHS(TO_DATE('2012-08-27','YYYY-MM-DD'),2)
+10/27/2012
+
+SELECT TO_DATE('3 OF JUNE, 2012', 'DD "OF" MONTH, YYYY') FROM DUAL
+TO_DATE('3OFJUNE,2012','DD"OF"MONTH,YYYY')
+06/03/2012
+
+TO_DATE('2003/07/09', 'yyyy/mm/dd')
+Result: date value of July 9, 2003
+
+TO_DATE('070903', 'MMDDYY')
+Result: date value of July 9, 2003
+
+TO_DATE('20020315', 'yyyymmdd')
+Result: date value of Mar 15, 2002
+
+==============================================================================================================================================
+=============================================<NULL & NULLIF FUNCTION>=========================================================================
+
+1. NVL
+NVL function lets you substitute a value when a null value is encountered.
+
+A. Syntax
+NVL( string1, replace_with )
+string1 - The string to test for a null value.
+replace_with - The value returned if string1 is null.
+Returns - The NVL function returns a substitute value.
+
+B. Example
+SELECT ENAME, JOB, SAL, NVL(TO_CHAR(COMM),'NO DATA FOUND') FROM EMP 
+NVL(TO_CHAR(COMM),'NODATAFOUND')
+NO DATA FOUND
+NO DATA FOUND
+NO DATA FOUND
+NO DATA FOUND
+NO DATA FOUND
+NO DATA FOUND
+NO DATA FOUND
+300
+500
+1400
+***NEED TO CHANGE COMM INTO CHARACTER COLUMN
+
+SELECT NVL(supplier_city, 'n/a') FROM suppliers;
+The SQL statement above would return 'n/a' if the supplier_city field contained a null value. Otherwise, it would return the supplier_city value.
+
+SELECT supplier_id, NVL(supplier_desc, supplier_name) FROM suppliers;
+This SQL statement would return the supplier_name field if the supplier_desc contained a null value. Otherwise, it would return the supplier_desc.
+
+SELECT NVL(commission, 0) FROM sales;
+This SQL statement would return 0 if the commission field contained a null value. Otherwise, it would return the commission field.
+
+Frequently Asked Questions
+Question: I tried to use the NVL function through VB to access Oracle DB.
+To be precise,
+SELECT NVL(Distinct (emp_name),'AAA'),................  FROM.................
+I got an oracle error when I use distinct clause with NVL, but when I remove distinct it works fine.
+Answer: It is possible to the use the DISTINCT clause with the NVL function. However, the DISTINCT must come before the use of the NVL function. For example:
+SELECT distinct NVL(emp_name, 'AAA')
+FROM employees;
+
+Question: Is it possible to use the NVL function with more than one column with the same function call? To be clear, if i need to apply this NVL function to more than one column like this:
+NVL(column1;column2 ...... , here is the default value for all )
+Answer: You will need to make separate NVL function calls for each column. For example:
+SELECT NVL(table_name, 'not found'), NVL(owner, 'not found')
+FROM all_tables; 
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+2. NULLIF
+
+NULLIF function compares expr1 and expr2. If expr1 and expr2 are equal, the NULLIF function returns NULL. Otherwise, it returns expr1.
+
+A. Syntax
+NULLIF( expr1, expr2 )
+expr1 - First value to compare. Must be either a numeric value or a value that is the same datatype as expr2.
+expr2 - Second value to compare. Must be either a numeric value or a value that is the same datatype as expr1.
+Returns - The NULLIF function returns NULL if expr1 and expr2 are equal.
+          The NULLIF function returns expr1 if expr1 and expr2 are not equal.
+***expr1 can be an expression that evaluates to NULL, but it can not be the literal NULL.
+
+B. Example
+NULLIF(12, 12)
+Result: NULL
+
+NULLIF(12, 13)
+Result: 12
+
+NULLIF('apples', 'apples')
+Result: NULL
+
+NULLIF('apples', 'oranges')
+Result: 'apples'
+
+NULLIF(NULL, 12)
+Result: ORA-00932 error   (because expr1 can not be the literal NULL)
+
+SELECT ENAME, LENGTH(ENAME), NVL(TO_CHAR(NULLIF(LENGTH(ENAME), 5)),'LENGTH IS EQUAL TO 5') FROM EMP;
+ENAME	LENGTH(ENAME)	                  NVL(TO_CHAR(NULLIF(LENGTH(ENAME),5)),'LENGTHISEQUALTO5')
+KING	  4	                            4
+BLAKE	  5	                            LENGTH IS EQUAL TO 5
+CLARK	  5	                            LENGTH IS EQUAL TO 5
+JONES	  5                           	LENGTH IS EQUAL TO 5
+SCOTT	  5	                            LENGTH IS EQUAL TO 5
+FORD	  4                             4
+SMITH	  5	                            LENGTH IS EQUAL TO 5
+ALLEN	  5                           	LENGTH IS EQUAL TO 5
+WARD	  4	                            4
+MARTIN	6                             6

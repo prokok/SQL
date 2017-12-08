@@ -1,6 +1,7 @@
 ===========================================================================================
 ===========================================================================================
 =================================<          SQL          >=================================
+https://www.techonthenet.com/oracle/index.php
 https://www.w3schools.com/sql/default.asp
 MySQL, SQL Server, MS Excess, Oracle Functions/DataTypes/Operators/QuickRef
 
@@ -143,7 +144,7 @@ A. Syntax
 UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;
 *** Note: Be careful when updating records in a table! Notice the WHERE clause in the UPDATE statement. The WHERE clause specifies which record(s) that should be updated. If you omit the WHERE clause, all records in the table will be updated!
 
-B.
+B. 
 UPDATE Customers SET ContactName = 'Alfred Schmidt', City= 'Frankfurt' WHERE CustomerID = 1;
 UPDATE Customers SET ContactName='Juan' WHERE Country='Mexico';
 UPDATE Customers SET ContactName='Juan';
@@ -417,9 +418,21 @@ SELECT City, Country FROM Customers WHERE Country='Germany' UNION SELECT City, C
 SELECT City, Country FROM Customers WHERE Country='Germany' UNION ALL SELECT City, Country FROM Suppliers WHERE Country='Germany' ORDER BY City;
 SELECT 'Customer' As Type, ContactName, City, Country FROM Customers UNION SELECT 'Supplier', ContactName, City, Country FROM Suppliers;
 
------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------C-------------------------------------------------------------------------------------
 
 19. GROUP BY
+
+1) SELECT expression1, expression2, ... expression_n, 
+       aggregate_function (aggregate_expression)
+2) FROM tables
+3) WHERE conditions (Single row functions only)
+---
+4) GROUP BY expression1, expression2, ... expression_n
+5) HAVING having_condition; (Grouping function)
+---
+6) ORDER BY expression
+---
+
 The GROUP BY statement is often used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result-set by one or more columns.
 
 A. Syntax
@@ -431,10 +444,68 @@ SELECT COUNT(CustomerID), Country FROM Customers GROUP BY Country ORDER BY COUNT
 SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
 GROUP BY ShipperName;
 
+GROUP BY
+GROUP BY clause is used in a SELECT statement to collect data across multiple records and group the results by one or more columns.
+
+A. Syntax
+SELECT expression1, expression2, ... expression_n, 
+       aggregate_function (aggregate_expression)
+FROM tables
+[WHERE conditions]
+GROUP BY expression1, expression2, ... expression_n;
+
+expression1, expression2, ... expression_n - The expressions that are not encapsulated within an aggregate function and must be included in the GROUP BY clause.
+aggregate_function - It can be a function such as SUM, COUNT, MIN, MAX, or AVG functions.
+aggregate_expression - This is the column or expression that the aggregate_function will be used on.
+tables - The tables that you wish to retrieve records from. There must be at least one table listed in the FROM clause.
+WHERE conditions - Optional. The conditions that must be met for the records to be selected.
+
+B. Examples
+SELECT product, SUM(sale) AS "Total sales"
+FROM order_details
+GROUP BY product;
+
+Because you have listed one column (the product field) in your SELECT statement that is not encapsulated in the SUM function, you must use the GROUP BY clause. The product field must, therefore, be listed in the GROUP BY clause.
+
+SELECT category, COUNT(*) AS "Number of suppliers"
+FROM suppliers
+WHERE available_products > 45
+GROUP BY category;
+
+SELECT department, MIN(salary) AS "Lowest salary"
+FROM employees
+GROUP BY department;
+
+SELECT department, MAX(salary) AS "Highest salary"
+FROM employees
+GROUP BY department;
+
+SELECT COUNT(*), JOB FROM EMP GROUP BY JOB;
+COUNT(*)	JOB
+4	        CLERK
+4	        SALESMAN
+1       	PRESIDENT
+3       	MANAGER
+2	        ANALYST
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 20. HAVING
+
+1) SELECT expression1, expression2, ... expression_n, 
+       aggregate_function (aggregate_expression)
+2) FROM tables
+3) WHERE conditions (Single row functions only)
+---
+4) GROUP BY expression1, expression2, ... expression_n
+5) HAVING having_condition; (Grouping function)
+---
+6) ORDER BY expression
+---
+
 The HAVING clause was added to SQL because the WHERE keyword could not be used with aggregate functions.
+***WE CANNOT USE GROUP FUNCTIONS IN THE WHERE CLAUSE.
+***Always followed by group by.
 
 A. Syntax
 SELECT column_name(s)
@@ -455,6 +526,49 @@ FROM Customers
 GROUP BY Country
 HAVING COUNT(CustomerID) > 5
 ORDER BY COUNT(CustomerID) DESC;
+
+
+HAVING
+HAVING clause is used in combination with the GROUP BY clause to restrict the groups of returned rows to only those whose the condition is TRUE.
+
+A. Syntax
+SELECT expression1, expression2, ... expression_n, 
+       aggregate_function (aggregate_expression)
+FROM tables
+[WHERE conditions]
+GROUP BY expression1, expression2, ... expression_n
+HAVING having_condition;
+Parameters or Arguments
+
+expression1, expression2, ... expression_n - The expressions that are not encapsulated within an aggregate function and must be included in the GROUP BY clause.
+aggregate_function - It can be a function such as SUM, COUNT, MIN, MAX, or AVG functions.
+aggregate_expression - This is the column or expression that the aggregate_function will be used against.
+tables - The tables that you wish to retrieve records from. There must be at least one table listed in the FROM clause.
+WHERE conditions - Optional. These are the conditions for the records to be selected.
+having_condition - This is a further condition applied only to the aggregated results to restrict the groups of returned rows. Only those groups whose condition evaluates to TRUE will be included in the result set.
+
+B. Example 
+
+SELECT department, SUM(sales) AS "Total sales"
+FROM order_details
+GROUP BY department
+HAVING SUM(sales) > 25000;
+
+SELECT department, COUNT(*) AS "Number of employees"
+FROM employees
+WHERE salary < 49500
+GROUP BY department
+HAVING COUNT(*) > 10;
+
+SELECT department, MIN(salary) AS "Lowest salary"
+FROM employees
+GROUP BY department
+HAVING MIN(salary) < 42000;
+
+SELECT department, MAX(salary) AS "Highest salary"
+FROM employees
+GROUP BY department
+HAVING MAX(salary) > 45000;
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
