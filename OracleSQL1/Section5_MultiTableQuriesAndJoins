@@ -1,9 +1,17 @@
 https://www.techonthenet.com/oracle/index.php 
+-Alias-
+***Oracle does not use 'AS' when naming table 
+***SELECT ALL columns of alias: alias_name.*
 
 Nested queries gives tremendous amount of flexibility
 Multi-Table Quries
+Nested Queries requires more time, so it is slow.
+  - 1st execute the subquery and then next query
 
-Joins
+JOINS
+
+WHERE EXISTS & Correlated Subquery
+Correlated subquery
 
 ==============================================================================================================================================
 
@@ -85,6 +93,16 @@ Joins
     SALESMAN	WARD	X
     SALESMAN	MARTIN	X
     ***since (SELECT * FROM DUAL) returns a single value 'X'
+    
+    SELECT A.ENAME, A.JOB, A.SAL, B.loc 
+    FROM (select * from emp where job in ('MANAGER','CLERK')) A, dept B 
+    where A.deptno = B.deptno
+    AND B.loc = 'DALLAS'
+    
+    ENAME	JOB     	SAL	  LOC
+    JONES	MANAGER 	2975	DALLAS
+    SMITH	CLERK	    800	  DALLAS
+    ADAMS	CLERK	    1100	DALLAS
     
 ===================================================<Join>=============================================================================
 
@@ -179,7 +197,16 @@ Joins
           FROM suppliers, orders
           WHERE suppliers.supplier_id = orders.supplier_id;
 
-
+          SELECT  * 
+          FROM emp, dept
+          WHERE emp.deptno = dept.deptno
+          
+          SELECT *  
+          FROM emp
+          INNER JOIN dept
+          on emp.deptno = dept.deptno
+          
+          
 1-2. LEFT OUTER JOIN
           LEFT OUTER JOIN returns all rows from the LEFT-hand table specified in the ON condition and only those rows from the other table where the joined fields are equal (join condition is met).
           LEFT OUTER JOIN would return the all records from table1 and only those records from table2 that intersect with table1.
@@ -251,3 +278,89 @@ Joins
           C. Old Syntax
           As a final note, it is worth mentioning that the FULL OUTER JOIN example above could not have been written in the old syntax without using a UNION query.
   
+          SELECT * 
+          FROM dept FULL OUTER JOIN emp
+          ON dept.deptno = emp.deptno
+          ORDER BY dept.deptno ASC
+
+          SELECT * 
+          FROM (SELECT * FROM emp) FULL OUTER JOIN emp
+          ON dept.deptno = emp.deptno
+          ORDER BY dept.deptno ASC
+
+          SELECT * 
+          FROM (SELECT * FROM dept) d FULL OUTER JOIN (SELECT * FROM emp) e
+          ON d.deptno = e.deptno
+          ORDER BY d.deptno ASC
+
+          SELECT * 
+          FROM (SELECT * FROM dept) d FULL OUTER JOIN (SELECT * FROM emp WHERE job = 'SALESMAN') e
+          ON d.deptno = e.deptno
+          ORDER BY d.deptno ASC
+          DEPTNO	DNAME	LOC	EMPNO	ENAME	JOB	MGR	HIREDATE	SAL	COMM	DEPTNO
+          10	ACCOUNTING	NEW YORK	-	-	-	-	-	-	-	-
+          20	RESEARCH	DALLAS	-	-	-	-	-	-	-	-
+          30	SALES	CHICAGO	7654	MARTIN	SALESMAN	7698	09/28/1981	1250	1400	30
+          30	SALES	CHICAGO	7521	WARD	SALESMAN	7698	02/22/1981	1250	500	30
+          30	SALES	CHICAGO	7499	ALLEN	SALESMAN	7698	02/20/1981	1600	300	30
+          30	SALES	CHICAGO	7844	TURNER	SALESMAN	7698	09/08/1981	1500	0	30
+          40	OPERATIONS	BOSTON	-	-	-	-	-	-	-	-
+          
+          SELECT e.*, d.*
+          FROM (SELECT * FROM dept) d LEFT OUTER JOIN (SELECT * FROM emp WHERE job = 'SALESMAN') e
+          ON d.deptno = e.deptno
+
+===================================================<WHERE EXIST>==================================================================
+
+1. WHERE EXISTS
+EXISTS condition is used in combination with a subquery and is considered "to be met" if the subquery returns at least one row. It can be used in a SELECT, INSERT, UPDATE, or DELETE statement.
+
+A. Syntax
+WHERE EXISTS ( subquery );
+subquery - The subquery is a SELECT statement. If the subquery returns at least one record in its result set, the EXISTS clause will evaluate to true and the EXISTS condition will be met. If the subquery does not return any records, the EXISTS clause will evaluate to false and the EXISTS condition will not be met.
+
+
+B. Example - With SELECT Statement
+SELECT *
+FROM customers
+WHERE EXISTS (SELECT *
+              FROM order_details
+              WHERE customers.customer_id = order_details.customer_id);
+*Example will return all records from the customers table where there is at least one record in the order_details table with the matching customer_id.
+
+SELECT *
+FROM customers
+WHERE NOT EXISTS (SELECT *
+                  FROM order_details
+                  WHERE customers.customer_id = order_details.customer_id);
+*Example will return all records from the customers table where there are no records in the order_details table for the given customer_id.
+
+
+INSERT INTO contacts
+(contact_id, contact_name)
+SELECT supplier_id, supplier_name
+FROM suppliers
+WHERE EXISTS (SELECT *
+              FROM order_details
+              WHERE suppliers.supplier_id = order_details.supplier_id);
+
+
+UPDATE suppliers
+SET supplier_name = (SELECT customers.name
+                     FROM customers
+                     WHERE customers.customer_id = suppliers.supplier_id)
+WHERE EXISTS (SELECT customers.name
+              FROM customers
+              WHERE customers.customer_id = suppliers.supplier_id);
+
+
+DELETE FROM suppliers
+WHERE EXISTS (SELECT *
+              FROM order_details
+              WHERE suppliers.supplier_id = order_details.supplier_id);
+
+2. Correlated Subquery
+ - Correlating Subquery with the Outer query
+ SELECT D.* FROM dept d WHERE NOT EXISTS (SELECT * from emp where d.deptno = emp.deptno)
+ (SELECT * from emp where d.deptno = emp.deptno) : Correlated Subquery.
+ 

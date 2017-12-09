@@ -313,6 +313,8 @@ SELECT * FROM Orders WHERE OrderDate BETWEEN #07/04/1996# AND #07/09/1996#;
 
 16. Aliases
 SQL aliases are used to give a table, or a column in a table, a temporary name.
+***Oracle does not use 'AS' when naming table
+***SELECT ALL columns of alias: alias_name.*
 Aliases are often used to make column names more readable. An alias only exists for the duration of the query.
 Aliases can be useful when:
 * There are more than one table involved in a query
@@ -1161,6 +1163,73 @@ DROP PRIMARY KEY;
 SQL Server / Oracle / MS Access:
 ALTER TABLE Persons
 DROP CONSTRAINT PK_Person;
+
+
+7-3. Primary Key
+    - a primary key is a single field or combination of fields that uniquely defines a record. None of the fields that are part of the primary key can contain a null value. A table can have only one primary key.
+    - In Oracle, a primary key can not contain more than 32 columns.
+    - A primary key can be defined in either a CREATE TABLE statement or an ALTER TABLE statement.
+    - Create Primary Key - Using CREATE TABLE statement
+
+    A. Syntax(CREATE/ADD/DROP/DISALBE/ENALBE)
+    CREATE TABLE table_name
+    (
+      column1 datatype null/not null,
+      column2 datatype null/not null,
+      ...
+
+      CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n)
+    );
+    
+    ALTER TABLE table_name
+    ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
+
+    ALTER TABLE table_name
+    DROP CONSTRAINT constraint_name;
+    
+    ALTER TABLE table_name
+    DISABLE CONSTRAINT constraint_name;
+    
+    ALTER TABLE table_name
+    ENABLE CONSTRAINT constraint_name;
+
+    B. Example
+  
+    CREATE TABLE supplier
+    (
+      supplier_id numeric(10) not null,
+      supplier_name varchar2(50) not null,
+      contact_name varchar2(50),
+      CONSTRAINT supplier_pk PRIMARY KEY (supplier_id)
+    );
+    - In this example, we've created a primary key on the supplier table called supplier_pk. It consists of only one field - the supplier_id field.
+
+    CREATE TABLE supplier
+    (
+      supplier_id numeric(10) not null,
+      supplier_name varchar2(50) not null,
+      contact_name varchar2(50),
+      CONSTRAINT supplier_pk PRIMARY KEY (supplier_id, supplier_name)
+    );
+
+    ALTER TABLE supplier
+    ADD CONSTRAINT supplier_pk PRIMARY KEY (supplier_id);
+    - In this example, we've created a primary key on the existing supplier table called supplier_pk. It consists of the field called supplier_id.
+
+    ALTER TABLE supplier
+    ADD CONSTRAINT supplier_pk PRIMARY KEY (supplier_id, supplier_name);
+
+    ALTER TABLE supplier
+    DROP CONSTRAINT supplier_pk;
+    - In this example, we're dropping a primary key on the supplier table called supplier_pk.
+
+    ALTER TABLE supplier
+    DISABLE CONSTRAINT supplier_pk;
+    - In this example, we're disabling a primary key on the supplier table called supplier_pk.
+
+    ALTER TABLE supplier
+    ENABLE CONSTRAINT supplier_pk;
+    - In this example, we're enabling a primary key on the supplier table called supplier_pk.
 
 
 <7-4. FOREIGN KEY>
