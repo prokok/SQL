@@ -1,144 +1,35 @@
 https://www.techonthenet.com/oracle/index.php 
 
-Primary Key
 CREATE TABLE
 
 INSERT INTO
 ***COMMIT; After inserting or deleting the data, we need to EXPLICITLY COMMIT; the data to the database
           in some cases depending on the database system
 
+DESCRIBE
+Primary Key
+
+ALTER TABLE
+
+UPDATE
+
+DELETE ~ IF NO CONDITIONS ARE PROVIDIED, JUST REMOVES THE DATA FROM TABLE (NOT DROPPING THE TABLE FROM DATABASE)
+TRUNCATE TABLE ~ JUST REMOVES THE DATA FROM TABLE (NOT DROPPING THE TABLE FROM DATABASE)
+DROP TABLE ~ DROP IT FROM DATABASE
+Foreign Key ~ Reference of primary key in the other table
+
+INDEXES
+***Restoring Deleted TABLE
+alter table table_name enable row movement;
+flashback table table_name to timestamp systimestamp - interval '1' hour;
+
+rowid
+System Tables
+SYNONYM
 
 ========================================================================================================================
-1. Primary KEY
-    The PRIMARY KEY constraint uniquely identifies each record in a database table.
-    Primary keys must contain UNIQUE values, and cannot contain NULL values.
-    A table can have only one primary key, which may consist of single or multiple fields.
 
-          -------------------------SQL PRIMARY KEY on CREATE TABLE------------------------------------------
-          The following SQL creates a PRIMARY KEY on the "ID" column when the "Persons" table is created:
-
-          MySQL:
-          CREATE TABLE Persons (
-              ID int NOT NULL,
-              LastName varchar(255) NOT NULL,
-              FirstName varchar(255),
-              Age int,
-              PRIMARY KEY (ID)
-          );
-
-          SQL Server / Oracle / MS Access:
-          CREATE TABLE Persons (
-              ID int NOT NULL PRIMARY KEY,
-              LastName varchar(255) NOT NULL,
-              FirstName varchar(255),
-              Age int
-          );
-
-
-          To allow naming of a PRIMARY KEY constraint, and for defining a PRIMARY KEY constraint on multiple columns, use the following SQL syntax:
-
-          MySQL / SQL Server / Oracle / MS Access:
-
-          CREATE TABLE Persons (
-              ID int NOT NULL,
-              LastName varchar(255) NOT NULL,
-              FirstName varchar(255),
-              Age int,
-              CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
-          );
-          Note: In the example above there is only ONE PRIMARY KEY (PK_Person). However, the VALUE of the primary key is made up of TWO COLUMNS (ID + LastName).
-
-          ----------------------SQL PRIMARY KEY on ALTER TABLE----------------------------
-          To create a PRIMARY KEY constraint on the "ID" column when the table is already created, use the following SQL:
-
-          MySQL / SQL Server / Oracle / MS Access:
-          ALTER TABLE Persons
-          ADD PRIMARY KEY (ID);
-
-          To allow naming of a PRIMARY KEY constraint, and for defining a PRIMARY KEY constraint on multiple columns, use the following SQL syntax:
-          MySQL / SQL Server / Oracle / MS Access:
-          ALTER TABLE Persons
-          ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
-          Note: If you use the ALTER TABLE statement to add a primary key, the primary key column(s) must already have been declared to not contain NULL values (when the table was first created).
-
-          ------------------------DROP a PRIMARY KEY Constraint--------------------------
-          To drop a PRIMARY KEY constraint, use the following SQL:
-
-          MySQL:
-          ALTER TABLE Persons
-          DROP PRIMARY KEY;
-
-          SQL Server / Oracle / MS Access:
-          ALTER TABLE Persons
-          DROP CONSTRAINT PK_Person;
-
-1. Primary Key
-    - a primary key is a single field or combination of fields that uniquely defines a record. None of the fields that are part of the primary key can contain a null value. A table can have only one primary key.
-    - In Oracle, a primary key can not contain more than 32 columns.
-    
-    A. Syntax(CREATE/ADD/DROP/DISALBE/ENALBE)
-    CREATE TABLE table_name
-    (
-      column1 datatype null/not null,
-      column2 datatype null/not null,
-      ...
-
-      CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n)
-    );
-    
-    ALTER TABLE table_name
-    ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
-
-    ALTER TABLE table_name
-    DROP CONSTRAINT constraint_name;
-    
-    ALTER TABLE table_name
-    DISABLE CONSTRAINT constraint_name;
-    
-    ALTER TABLE table_name
-    ENABLE CONSTRAINT constraint_name;
-
-    B. Example
-  
-    CREATE TABLE supplier
-    (
-      supplier_id numeric(10) not null,
-      supplier_name varchar2(50) not null,
-      contact_name varchar2(50),
-      CONSTRAINT supplier_pk PRIMARY KEY (supplier_id)
-    );
-    - In this example, we've created a primary key on the supplier table called supplier_pk. It consists of only one field - the supplier_id field.
-
-    CREATE TABLE supplier
-    (
-      supplier_id numeric(10) not null,
-      supplier_name varchar2(50) not null,
-      contact_name varchar2(50),
-      CONSTRAINT supplier_pk PRIMARY KEY (supplier_id, supplier_name)
-    );
-
-    ALTER TABLE supplier
-    ADD CONSTRAINT supplier_pk PRIMARY KEY (supplier_id);
-    - In this example, we've created a primary key on the existing supplier table called supplier_pk. It consists of the field called supplier_id.
-
-    ALTER TABLE supplier
-    ADD CONSTRAINT supplier_pk PRIMARY KEY (supplier_id, supplier_name);
-
-    ALTER TABLE supplier
-    DROP CONSTRAINT supplier_pk;
-    - In this example, we're dropping a primary key on the supplier table called supplier_pk.
-
-    ALTER TABLE supplier
-    DISABLE CONSTRAINT supplier_pk;
-    - In this example, we're disabling a primary key on the supplier table called supplier_pk.
-
-    ALTER TABLE supplier
-    ENABLE CONSTRAINT supplier_pk;
-    - In this example, we're enabling a primary key on the supplier table called supplier_pk.
-
----------------------------------------------------------------------------------------------------------------------------------------------------
-
-2. CREATE TABLE
+1. CREATE TABLE
     The CREATE TABLE statement is used to create a new table in a database.
     
     A. Syntax
@@ -177,7 +68,7 @@ INSERT INTO
     );
     
     
-2. CREATE TABLE
+1. CREATE TABLE
           CREATE TABLE statement allows you to create and define a table.
 
           A. Syntax
@@ -212,7 +103,8 @@ INSERT INTO
               FOREIGN KEY (department_id)
               REFERENCES departments(department_id)
           );
-
+          
+    ***number(n,m) : n - the total digits, m - decimal digits
 ========================================================================================================================
 
 1. INSERT INTO
@@ -326,3 +218,823 @@ INSERT INTO Customers (CustomerName, City, Country) VALUES ('Cardinal', 'Stavang
         WHERE state = 'Florida';
 
 ========================================================================================================================
+
+1. DESCRIBE
+Provides a decription of the specified table or view. 
+**If the table or view is in a particular schema, qualify it with the schema name. If the table or view name is case-sensitive, enclose it in single quotes. You can display all the columns from all the tables and views in a single schema in a single display by using the wildcard character '*'. See the examples below.
+
+B. Example
+ij> describe airlines;
+COLUMN_NAME         |TYPE_NAME|DEC&|NUM&|COLUM&|COLUMN_DEF|CHAR_OCTE&|IS_NULL&
+------------------------------------------------------------------------------
+AIRLINE             |CHAR     |NULL|NULL|2     |NULL      |4         |NO
+AIRLINE_FULL        |VARCHAR  |NULL|NULL|24    |NULL      |48        |YES
+BASIC_RATE          |DOUBLE   |NULL|2   |52    |NULL      |NULL      |YES
+DISTANCE_DISCOUNT   |DOUBLE   |NULL|2   |52    |NULL      |NULL      |YES
+BUSINESS_LEVEL_FACT&|DOUBLE   |NULL|2   |52    |NULL      |NULL      |YES
+FIRSTCLASS_LEVEL_FA&|DOUBLE   |NULL|2   |52    |NULL      |NULL      |YES
+ECONOMY_SEATS       |INTEGER  |0   |10  |10    |NULL      |NULL      |YES
+BUSINESS_SEATS      |INTEGER  |0   |10  |10    |NULL      |NULL      |YES
+FIRSTCLASS_SEATS    |INTEGER  |0   |10  |10    |NULL      |NULL      |YES
+  -- describe a table in another schema:
+  describe user2.flights;
+  -- describe a table whose name is in mixed-case:
+  describe 'EmployeeTable';
+  -- describe a table in a different schema, with a case-sensitive name:
+  describe 'MyUser.Orders';
+  -- describe all the columns from all the tables and views in APP schema:
+  describe 'APP.*';
+  -- describe all the columns in the current schema:
+  describe '*';
+  
+----------------------------------------------------------------------------------------------------------------------------  
+  
+2. Primary KEY(-> BELONGS TO QNIQUE INDEX WHEN YOU CREATING IT)
+      The PRIMARY KEY constraint uniquely identifies each record in a database table.
+      Primary keys must contain UNIQUE values, and cannot contain NULL values.
+      A table can have only one primary key, which may consist of single or multiple fields.
+  
+            -------------------------SQL PRIMARY KEY on CREATE TABLE------------------------------------------
+            The following SQL creates a PRIMARY KEY on the "ID" column when the "Persons" table is created:
+  
+            MySQL:
+            CREATE TABLE Persons (
+                ID int NOT NULL,
+                LastName varchar(255) NOT NULL,
+                FirstName varchar(255),
+                Age int,
+                PRIMARY KEY (ID)
+            );
+  
+            SQL Server / Oracle / MS Access:
+            CREATE TABLE Persons (
+                ID int NOT NULL PRIMARY KEY,
+                LastName varchar(255) NOT NULL,
+                FirstName varchar(255),
+                Age int
+            );
+  
+  
+            To allow naming of a PRIMARY KEY constraint, and for defining a PRIMARY KEY constraint on multiple columns, use the following SQL syntax:
+  
+            MySQL / SQL Server / Oracle / MS Access:
+  
+            CREATE TABLE Persons (
+                ID int NOT NULL,
+                LastName varchar(255) NOT NULL,
+                FirstName varchar(255),
+                Age int,
+                CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
+            );
+            Note: In the example above there is only ONE PRIMARY KEY (PK_Person). However, the VALUE of the primary key is made up of TWO COLUMNS (ID + LastName).
+  
+            ----------------------SQL PRIMARY KEY on ALTER TABLE----------------------------
+            To create a PRIMARY KEY constraint on the "ID" column when the table is already created, use the following SQL:
+  
+            MySQL / SQL Server / Oracle / MS Access:
+            ALTER TABLE Persons
+            ADD PRIMARY KEY (ID);
+  
+            To allow naming of a PRIMARY KEY constraint, and for defining a PRIMARY KEY constraint on multiple columns, use the following SQL syntax:
+            MySQL / SQL Server / Oracle / MS Access:
+            ALTER TABLE Persons
+            ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
+            Note: If you use the ALTER TABLE statement to add a primary key, the primary key column(s) must already have been declared to not contain NULL values (when the table was first created).
+  
+            ------------------------DROP a PRIMARY KEY Constraint--------------------------
+            To drop a PRIMARY KEY constraint, use the following SQL:
+  
+            MySQL:
+            ALTER TABLE Persons
+            DROP PRIMARY KEY;
+  
+            SQL Server / Oracle / MS Access:
+            ALTER TABLE Persons
+            DROP CONSTRAINT PK_Person;
+  
+  2. Primary Key
+      - a primary key is a single field or combination of fields that uniquely defines a record. None of the fields that are part of the primary key can contain a null value. A table can have only one primary key.
+      - In Oracle, a primary key can not contain more than 32 columns.
+      
+      A. Syntax(CREATE/ADD/DROP/DISALBE/ENALBE)
+      CREATE TABLE table_name
+      (
+        column1 datatype null/not null,
+        column2 datatype null/not null,
+        ...
+  
+        CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n)
+      );
+      
+      ALTER TABLE table_name
+      ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
+  
+      ALTER TABLE table_name
+      DROP CONSTRAINT constraint_name;
+      
+      ALTER TABLE table_name
+      DISABLE CONSTRAINT constraint_name;
+      
+      ALTER TABLE table_name
+      ENABLE CONSTRAINT constraint_name;
+  
+      B. Example
+    
+      CREATE TABLE supplier
+      (
+        supplier_id numeric(10) not null,
+        supplier_name varchar2(50) not null,
+        contact_name varchar2(50),
+        CONSTRAINT supplier_pk PRIMARY KEY (supplier_id)
+      );
+      - In this example, we've created a primary key on the supplier table called supplier_pk. It consists of only one field - the supplier_id field.
+  
+      CREATE TABLE supplier
+      (
+        supplier_id numeric(10) not null,
+        supplier_name varchar2(50) not null,
+        contact_name varchar2(50),
+        CONSTRAINT supplier_pk PRIMARY KEY (supplier_id, supplier_name)
+      );
+  
+      ALTER TABLE supplier
+      ADD CONSTRAINT supplier_pk PRIMARY KEY (supplier_id);
+      - In this example, we've created a primary key on the existing supplier table called supplier_pk. It consists of the field called supplier_id.
+  
+      ALTER TABLE supplier
+      ADD CONSTRAINT supplier_pk PRIMARY KEY (supplier_id, supplier_name);
+  
+      ALTER TABLE supplier
+      DROP CONSTRAINT supplier_pk;
+      - In this example, we're dropping a primary key on the supplier table called supplier_pk.
+  
+      ALTER TABLE supplier
+      DISABLE CONSTRAINT supplier_pk;
+      - In this example, we're disabling a primary key on the supplier table called supplier_pk.
+  
+      ALTER TABLE supplier
+      ENABLE CONSTRAINT supplier_pk;
+      - In this example, we're enabling a primary key on the supplier table called supplier_pk.
+
+========================================================================================================================
+
+1. ALTER TABLE
+    The ALTER TABLE statement is used to add, delete, or modify columns in an existing table.
+    The ALTER TABLE statement is also used to add and drop various constraints on an existing table.
+      
+    A. Syntax
+      
+    ALTER TABLE - ADD Column
+    To add a column in a table, use the following syntax:
+    ALTER TABLE table_name
+    ADD column_name datatype;
+      
+    
+    ALTER TABLE - DROP COLUMN
+    To delete a column in a table, use the following syntax (notice that some database systems don't allow deleting a column):
+    ALTER TABLE table_name
+    DROP COLUMN column_name;
+      
+    
+    ALTER TABLE - ALTER/MODIFY COLUMN
+    To change the data type of a column in a table, use the following syntax:
+      
+    SQL Server / MS Access:
+    ALTER TABLE table_name
+    ALTER COLUMN column_name datatype;
+      
+    My SQL / Oracle (prior version 10G):
+    ALTER TABLE table_name
+    MODIFY COLUMN column_name datatype;
+      
+    Oracle 10G and later:
+    ALTER TABLE table_name
+    MODIFY column_name datatype;
+
+1. ALTER TABLE
+  used to add, modify, or drop/delete columns in a table. The Oracle ALTER TABLE statement is also used to rename a table.
+
+  -Add column in table-
+    A. Syntax
+    ALTER TABLE table_name
+      ADD column_name column-definition;
+
+    B.Example
+    ALTER TABLE customers
+      ADD customer_name varchar2(45);
+
+    ALTER TABLE customers
+      ADD city varchar2(40) DEFAULT 'Seattle';
+
+  
+  -Add multiple columns in table-
+    A.Syntax
+    ALTER TABLE table_name
+      ADD (column_1 column-definition,
+          column_2 column-definition,
+          ...
+          column_n column_definition);
+    
+    B. Example
+      ALTER TABLE customers
+        ADD (customer_name varchar2(45),
+        city varchar2(40) DEFAULT 'Seattle');
+
+
+  - Modify column in table - 
+    A. Syntax
+    ALTER TABLE table_name
+      MODIFY column_name column_type;
+    
+    B. Example
+    ALTER TABLE customers
+      MODIFY customer_name varchar2(100) NOT NULL;
+
+    ALTER TABLE customers
+      MODIFY city varchar2(75) DEFAULT 'Seattle' NOT NULL;
+
+
+  - Modify Multiple columns in table - 
+    A. Syntax
+    ALTER TABLE table_name
+      MODIFY (column_1 column_type,
+              column_2 column_type,
+              ...
+              column_n column_type);
+    B. Example
+    ALTER TABLE customers
+      MODIFY (customer_name varchar2(100) NOT NULL,
+              city varchar2(75) DEFAULT 'Seattle' NOT NULL);
+
+
+  - Drop column in table -
+    A. Syntax
+    ALTER TABLE table_name
+      DROP COLUMN column_name;
+
+    B. Example
+    ALTER TABLE customers
+      DROP COLUMN customer_name;
+
+  - Rename column in table -
+    A. Syntax
+    ALTER TABLE table_name
+      RENAME COLUMN old_name TO new_name;
+
+    B. Example
+    ALTER TABLE customers
+      RENAME COLUMN customer_name TO cname;
+
+  - Rename table - 
+    A. Syntax
+    ALTER TABLE table_name
+      RENAME TO new_table_name;
+
+    B. Example
+    ALTER TABLE customers
+      RENAME TO contacts;
+
+========================================================================================================================
+
+1. UPDATE
+The UPDATE statement is used to modify the existing records in a table.
+
+A. Syntax
+UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;
+*** Note: Be careful when updating records in a table! Notice the WHERE clause in the UPDATE statement. The WHERE clause specifies which record(s) that should be updated. If you omit the WHERE clause, all records in the table will be updated!
+
+B. 
+UPDATE Customers SET ContactName = 'Alfred Schmidt', City= 'Frankfurt' WHERE CustomerID = 1;
+UPDATE Customers SET ContactName='Juan' WHERE Country='Mexico';
+UPDATE Customers SET ContactName='Juan';
+*** Be careful when updating records. If you omit the WHERE clause, ALL records will be updated!
+
+1. UPDATE
+- update existing records in a table in an Oracle database. There are 2 syntaxes for an update query in Oracle depending on whether you are performing a traditional update or updating one table with data from another table.
+
+A. Syntax
+UPDATE table
+SET column1 = expression1,
+    column2 = expression2,
+    ...
+    column_n = expression_n
+[WHERE conditions];
+
+OR
+
+UPDATE table1
+SET column1 = (SELECT expression1
+               FROM table2
+               WHERE conditions)
+[WHERE conditions];
+
+column1, column2, ... column_n - The columns that you wish to update.
+expression1, expression2, ... expression_n - The new values to assign to the column1, column2, ... column_n. So column1 would be assigned the value of expression1, column2 would be assigned the value of expression2, and so on.
+WHERE conditions - Optional. The conditions that must be met for the update to execute. If no conditions are provided, then all records in the table will be updated.
+
+
+B. Example - Update single column
+
+UPDATE customers
+SET last_name = 'Anderson'
+WHERE customer_id = 5000;
+This Oracle UPDATE example would update the last_name to 'Anderson' in the customers table where the customer_id is 5000.
+
+UPDATE customers
+SET state = 'California',
+    customer_rep = 32
+WHERE customer_id > 100;
+
+UPDATE customers
+SET c_details = (SELECT contract_date
+                 FROM suppliers
+                 WHERE suppliers.supplier_name = customers.customer_name)
+WHERE customer_id < 1000;
+
+UPDATE suppliers
+SET supplier_name = (SELECT customers.customer_name
+                     FROM customers
+                     WHERE customers.customer_id = suppliers.supplier_id)
+WHERE EXISTS (SELECT customers.customer_name
+              FROM customers
+              WHERE customers.customer_id = suppliers.supplier_id);
+
+              
+========================================================================================================================
+              
+1. DELETE
+The DELETE statement is used to delete existing records in a table.
+
+A. Syntax
+DELETE FROM table_name WHERE condition;
+*** Note: Be careful when deleting records in a table! Notice the WHERE clause in the DELETE statement. The WHERE clause specifies which record(s) that should be deleted. If you omit the WHERE clause, all records in the table will be deleted!
+
+B. Examples
+DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
+DELETE FROM table_name;
+DELETE * FROM table_name;
+***It is possible to delete all rows in a table without deleting the table. This means that the table structure, attributes, and indexes will be intact:
+
+1. DELETE
+- delete a single record or multiple records from a table in Oracle.
+
+A. Syntax
+DELETE FROM table [WHERE conditions];
+table - The table that you wish to delete records from.
+WHERE conditions - Optional. The conditions that must be met for the records to be deleted. If no conditions are provided, then all records from the table will be deleted.
+***You do not need to list fields in the Oracle DELETE statement since you are deleting the entire row from the table.
+
+B. Example - Using One condition
+DELETE FROM customers
+WHERE last_name = 'Smith';
+
+DELETE FROM customers
+WHERE last_name = 'Anderson'
+AND customer_id > 25;
+
+DELETE FROM suppliers
+WHERE EXISTS
+  ( SELECT customers.customer_name
+    FROM customers
+    WHERE customers.customer_id = suppliers.supplier_id
+    AND customer_id > 25 );
+
+---------------------------------------------------------------------------------------------------------------------------- 
+
+2. TRUNCATE TABLE
+The TRUNCATE TABLE statement is used to delete the data inside a table, but not the table itself.
+
+A. Syntax
+TRUNCATE TABLE table_name;
+
+2. TRUNCATE TABLE
+- Remove all records from a table in Oracle. It performs the same function as a DELETE statement without a WHERE clause.
+***Warning: If you truncate a table, the TRUNCATE TABLE statement can not be rolled back.
+
+A. Syntax
+TRUNCATE TABLE [schema_name.]table_name
+  [ PRESERVE MATERIALIZED VIEW LOG | PURGE MATERIALIZED VIEW LOG ]
+  [ DROP STORAGE | REUSE STORAGE ] ;
+schema_name - Optional. If specified, it is the name of the schema that the table belongs to.
+table_name - The table that you wish to truncate.
+PRESERVE MATERIALIZED VIEW LOG - Optional. If specified, the materialized view log will be preserved when the table is truncated. This is the default behavior.
+PURGE MATERIALIZED VIEW LOG - Optional. If specified, the materialized view log will be purged when the table is truncated.
+DROP STORAGE - Optional. If specified, all storage for the truncated rows will be deallocated, except the space that has been allocated by MINEXTENTS. This is the default behavior.
+REUSE STORAGE - Optional. If specified, all storage for the truncated rows will remain allocated to the table.
+
+***In Oracle, truncating a table is a fast way to clear out records from a table if you don't need to worry about rolling back. One of the reasons is that when the table is truncated, it does not affect any of the table's indexes, triggers, or dependencies. Truncating a table is also a lot easier than dropping the table and recreating it.
+
+B. Example
+
+TRUNCATE TABLE customers;
+This example would truncate the table called customers and remove all records from that table.
+***It would be equivalent to the following DELETE statement in Oracle:
+DELETE FROM customers;
+***Both of these statements would result in all data from the customers table being deleted. The main difference between the two is that you can roll back the DELETE statement if you choose, but you can't roll back the TRUNCATE TABLE statement.
+
+TRUNCATE TABLE totn.suppliers;
+This example would truncate the table called suppliers in the schema called totn. Before you can truncate a table in another schema, you must have the necessary privileges such as DROP ANY TABLE.
+
+---------------------------------------------------------------------------------------------------------------------------- 
+
+3. DROP TABLE
+The following SQL statement drops the existing table
+
+A. Syntax
+DROP TABLE Shippers;
+
+B. Examples
+DROP TABLE Shippers;
+
+3. DROP TABLE
+remove or delete a table from the Oracle database.
+
+A. Syntax
+DROP TABLE [schema_name].table_name
+[ CASCADE CONSTRAINTS ]
+[ PURGE ];
+schema_name - The name of the schema that owns the table.
+table_name - The name of the table to remove from the Oracle database.
+CASCADE CONSTRAINTS - Optional. If specified, all referential integrity constraints will be dropped as well.
+PURGE - Optional. If specified, the table and its dependent objects will be purged from the recycle bin and you will not be able to recover the table. If not specified, the table and its dependent objects are placed in the recycle bin and can be recovered later, if needed.
+***If there are referential integrity constraints on table_name and you do not specify the CASCADE CONSTRAINTS option, the DROP TABLE statement will return an error and Oracle will not drop the table.
+
+B. Example
+DROP TABLE customers;
+This Oracle DROP TABLE example would drop the table called customers.
+
+DROP TABLE customers PURGE;
+***This DROP TABLE statement would drop the table called customers and issue a PURGE so that the space associated with the customers table is released. In other words, the customers table is not placed into the recycle bin and, therefore, can not be recovered later if required
+***When issuing a DROP TABLE statement in Oracle, you can specify the PURGE option. The PURGE option will purge the table and its dependent objects so that they do not appear in the recycle bin. The risk of specifying the PURGE option is that you will not be able to recover the table. However, the benefit of using PURGE is that you can ensure that sensitive data will not be left sitting in the recycle bin.
+
+---------------------------------------------------------------------------------------------------------------------------- 
+
+4. FOREIGN KEY
+A FOREIGN KEY is a key used to link two tables together.
+A FOREIGN KEY is a field (or collection of fields) in one table that refers to the PRIMARY KEY in another table.
+The table containing the foreign key is called the child table, and the table containing the candidate key is called the referenced or parent table.
+Look at the following two tables:
+
+"Persons" table:
+
+PersonID	LastName	FirstName	Age
+1			Hansen		Ola			30
+2			Svendson	Tove		23
+3			Pettersen	Kari		20
+
+
+"Orders" table:
+
+OrderID	OrderNumber	PersonID
+1		77895		3
+2		44678		3
+3		22456		2
+4		24562		1
+
+Notice that the "PersonID" column in the "Orders" table points to the "PersonID" column in the "Persons" table.
+The "PersonID" column in the "Persons" table is the PRIMARY KEY in the "Persons" table.
+The "PersonID" column in the "Orders" table is a FOREIGN KEY in the "Orders" table.
+The FOREIGN KEY constraint is used to prevent actions that would destroy links between tables.
+The FOREIGN KEY constraint also prevents invalid data from being inserted into the foreign key column, because it has to be one of the values contained in the table it points to.
+
+4.Foreign Key
+  - A foreign key is a way to enforce referential integrity within your Oracle database. A foreign key means that values in one table must also appear in another table.
+  - The referenced table is called the parent table while the table with the foreign key is called the child table. The foreign key in the child table will generally reference a primary key in the parent table.
+  - A foreign key can be defined in either a CREATE TABLE statement or an ALTER TABLE statement.
+
+-Creating Using a CREATE TABLE statement- 
+      A. Syntax
+      CREATE TABLE table_name
+      (
+        column1 datatype null/not null,
+        column2 datatype null/not null,
+        ...
+
+        CONSTRAINT fk_column
+          FOREIGN KEY (column1, column2, ... column_n)
+          REFERENCES parent_table (column1, column2, ... column_n)
+      );
+
+      B. Example
+      CREATE TABLE supplier
+      ( supplier_id numeric(10) not null,
+        supplier_name varchar2(50) not null,
+        contact_name varchar2(50),
+        CONSTRAINT supplier_pk PRIMARY KEY (supplier_id)
+      );
+
+      CREATE TABLE products
+      ( product_id numeric(10) not null,
+        supplier_id numeric(10) not null,
+        CONSTRAINT fk_supplier
+          FOREIGN KEY (supplier_id)
+          REFERENCES supplier(supplier_id)
+      );
+      - In this example, we've created a primary key on the supplier table called supplier_pk. It consists of only one field - the supplier_id field. Then we've created a foreign key called fk_supplier on the products table that references the supplier table based on the supplier_id field.
+
+
+      CREATE TABLE supplier
+      ( supplier_id numeric(10) not null,
+        supplier_name varchar2(50) not null,
+        contact_name varchar2(50),
+        CONSTRAINT supplier_pk PRIMARY KEY (supplier_id, supplier_name)
+      );
+
+      CREATE TABLE products
+      ( product_id numeric(10) not null,
+        supplier_id numeric(10) not null,
+        supplier_name varchar2(50) not null,
+        CONSTRAINT fk_supplier_comp
+          FOREIGN KEY (supplier_id, supplier_name)
+          REFERENCES supplier(supplier_id, supplier_name)
+      );
+
+- Creating Using an ALTER TABLE statement -
+      A. Syntax
+      ALTER TABLE table_name
+      ADD CONSTRAINT constraint_name
+         FOREIGN KEY (column1, column2, ... column_n)
+         REFERENCES parent_table (column1, column2, ... column_n);
+
+      B. Example
+      ALTER TABLE products
+      ADD CONSTRAINT fk_supplier
+        FOREIGN KEY (supplier_id)
+        REFERENCES supplier(supplier_id);
+
+      ALTER TABLE products
+      ADD CONSTRAINT fk_supplier
+        FOREIGN KEY (supplier_id, supplier_name)
+        REFERENCES supplier(supplier_id, supplier_name);
+
+-Dropping Using an ALTER TABLE statement -    
+      A. Syntax
+      ALTER TABLE table_name
+        DROP CONSTRAINT constraint_name;
+    
+      B.Example
+        
+        If you had created a foreign key as follows:
+        
+        CREATE TABLE supplier
+        ( supplier_id numeric(10) not null,
+          supplier_name varchar2(50) not null,
+          contact_name varchar2(50),
+          CONSTRAINT supplier_pk PRIMARY KEY (supplier_id)
+        );
+        
+        CREATE TABLE products
+        ( product_id numeric(10) not null,
+          supplier_id numeric(10) not null,
+          CONSTRAINT fk_supplier
+            FOREIGN KEY (supplier_id)
+            REFERENCES supplier(supplier_id)
+        );
+        In this example, we've created a primary key on the supplier table called supplier_pk. It consists of only one field - the supplier_id field. Then we've created a foreign key called fk_supplier on the products table that references the supplier table based on the supplier_id field.
+        
+        If we then wanted to drop the foreign key called fk_supplier, we could execute the following command:
+        
+        ALTER TABLE products
+        DROP CONSTRAINT fk_supplier;
+
+========================================================================================================================
+
+1. CREATE INDEX
+The CREATE INDEX statement is used to create indexes in tables.
+Indexes are used to retrieve data from the database very fast. The users cannot see the indexes, they are just used to speed up searches/queries.
+Note: Updating a table with indexes takes more time than updating a table without (because the indexes also need an update). So, only create indexes on columns that will be frequently searched against.
+
+A. Syntax
+Duplicate values are not allowed:
+CREATE INDEX index_name ON table_name (column1, column2, ...);
+
+Duplicate values are not allowed:
+CREATE UNIQUE INDEX index_name ON table_name (column1, column2, ...);
+Note: The syntax for creating indexes varies among different databases. Therefore: Check the syntax for creating indexes in your database.
+
+B. Examples
+
+The SQL statement below creates an index named "idx_lastname" on the "LastName" column in the "Persons" table:
+CREATE INDEX idx_lastname ON Persons (LastName);
+
+If you want to create an index on a combination of columns, you can list the column names within the parentheses, separated by commas:
+CREATE INDEX idx_pname ON Persons (LastName, FirstName);
+
+DROP INDEX Statement
+delete an index in a table.
+
+MS Access:
+DROP INDEX index_name ON table_name;
+
+SQL Server:
+DROP INDEX table_name.index_name;
+
+DB2/Oracle:
+DROP INDEX index_name;
+
+MySQL:
+ALTER TABLE table_name DROP INDEX index_name;
+
+
+1. INDEXES
+- An index is a performance-tuning method of allowing faster retrieval of records. An index creates an entry for each value that appears in the indexed columns. By default, Oracle creates B-tree indexes.
+
+      - Create an Index -
+      A. Syntax
+      CREATE [UNIQUE] INDEX index_name
+        ON table_name (column1, column2, ... column_n)
+        [ COMPUTE STATISTICS ];
+      UNIQUE - It indicates that the combination of values in the indexed columns must be unique.
+      index_name - The name to assign to the index.
+      table_name - The name of the table in which to create the index.
+      column1, column2, ... column_n - The columns to use in the index.
+      COMPUTE STATISTICS - It tells Oracle to collect statistics during the creation of the index. The statistics are then used by the optimizer to choose a "plan of execution" when SQL statements are executed.
+
+      B. Example
+      CREATE INDEX supplier_idx
+        ON supplier (supplier_name);
+      -In this example, we've created an index on the supplier table called supplier_idx. It consists of only one field - the supplier_name field.
+
+      CREATE INDEX supplier_idx
+        ON supplier (supplier_name, city);
+      - We could also choose to collect statistics upon creation of the index as follows:
+
+      CREATE INDEX supplier_idx
+        ON supplier (supplier_name, city)
+        COMPUTE STATISTICS;
+
+
+      - Create a Function-Based Index - 
+      A. Syntax
+      CREATE [UNIQUE] INDEX index_name
+        ON table_name (function1, function2, ... function_n)
+        [ COMPUTE STATISTICS ];
+      UNIQUE - It indicates that the combination of values in the indexed columns must be unique.
+      index_name - The name to assign to the index.
+      table_name - The name of the table in which to create the index.
+      function1, function2, ... function_n - The functions to use in the index.
+      COMPUTE STATISTICS - It tells Oracle to collect statistics during the creation of the index. The statistics are then used by the optimizer to choose a "plan of execution" when SQL statements are executed.
+
+      B.Example
+      CREATE INDEX supplier_idx
+        ON supplier (UPPER(supplier_name));
+      - In this example, we've created an index based on the uppercase evaluation of the supplier_name field.
+      - However, to be sure that the Oracle optimizer uses this index when executing your SQL statements, be sure that UPPER(supplier_name) does not evaluate to a NULL value. To ensure this, add UPPER(supplier_name) IS NOT NULL to your WHERE clause as follows:
+
+      SELECT supplier_id, supplier_name, UPPER(supplier_name)
+      FROM supplier
+      WHERE UPPER(supplier_name) IS NOT NULL
+      ORDER BY UPPER(supplier_name);
+
+
+      - Rename an Index - 
+      A. Syntax
+      ALTER INDEX index_name
+        RENAME TO new_index_name;
+      index_name - The name of the index that you wish to rename.
+      new_index_name - The new name to assign to the index.
+
+      B. Example
+      ALTER INDEX supplier_idx
+        RENAME TO supplier_index_name;
+      - In this example, we're renaming the index called supplier_idx to supplier_index_name.
+
+
+      - Collect Statistics on an Index - 
+      -- If you forgot to collect statistics on the index when you first created it or you want to update the statistics, you can always use the ALTER INDEX command to collect statistics at a later date.
+      A. Syntax
+      ALTER INDEX index_name
+        REBUILD COMPUTE STATISTICS;
+      index_name - The index in which to collect statistics.
+
+      B. Example
+      ALTER INDEX supplier_idx
+        REBUILD COMPUTE STATISTICS;
+      - In this example, we're collecting statistics for the index called supplier_idx.
+
+
+      - Drop an Index -
+      A. Syntax
+      DROP INDEX index_name;
+      index_name - The name of the index to drop.
+      B. Example
+      DROP INDEX supplier_idx;
+      - In this example, we're dropping an index called supplier_idx.
+
+========================================================================================================================
+      
+1. rowid(Pseudo Column)
+For each row in the database, the ROWID pseudocolumn returns the address of the row. Oracle Database rowid values contain information necessary to locate a row:
+  The data object number of the object
+  The data block in the datafile in which the row resides
+  The position of the row in the data block (first row is 0)
+  The datafile in which the row resides (first file is 1). The file number is relative to the tablespace.
+
+Usually, a rowid value uniquely identifies a row in the database. However, rows in different tables that are stored together in the same cluster can have the same rowid.
+Values of the ROWID pseudocolumn have the datatype ROWID or UROWID. Please refer to "ROWID Datatype" and "UROWID Datatype" for more information.
+
+Rowid values have several important uses:
+- They are the fastest way to access a single row.
+- They can show you how the rows in a table are stored.
+- They are unique identifiers for rows in a table.
+***You should not use ROWID as the primary key of a table. If you delete and reinsert a row with the Import and Export utilities, for example, then its rowid may change. If you delete a row, then Oracle may reassign its rowid to a new row inserted later.
+***Although you can use the ROWID pseudocolumn in the SELECT and WHERE clause of a query, these pseudocolumn values are not actually stored in the database. You cannot insert, update, or delete a value of the ROWID pseudocolumn.
+
+Example 
+This statement selects the address of all rows that contain data for employees in department 20:
+
+SELECT ROWID, last_name  
+   FROM employees
+   WHERE department_id = 20;
+
+SELECT rowid, store_id, city FROM stores
+ROWID	              STORE_ID CITY
+AEQXyBAFcAAAAF2AAA	4	       Phildelphia
+AEQXyBAFcAAAAF2AAB	5	       Boston
+AEQXyBAFcAAAAF2AAC	6	       Seattle
+AEQXyBAFcAAAAF2AAD	4	       Phildelphia
+AEQXyBAFcAAAAF2AAE	5	       Boston
+AEQXyBAFcAAAAF2AAF	6	       Seattle
+AEQXyBAFcAAAAF2AAG	2	       New York City
+AEQXyBAFcAAAAF2AAH	3	       Chicago
+AEQXyBAFcAAAAF2AAI	1	       San Francisco
+
+DELETE FROM stores
+WHERE rowid NOT IN (
+SELECT MIN(rowid) 
+FROM stores
+GROUP by store_id, city)
+
+---------------------------------------------------------------------------------------------------------------------------- 
+
+2. System Tables
+Check Oracle System Tables
+https://www.techonthenet.com/oracle/sys_tables/index.php
+
+SELECT * FROM all_tables 
+where rownum<10;
+
+SELECT * FROM all_tables 
+WHERE table_name = 'EMPLOYEES'
+AND rownum<10;
+
+SELECT * FROM ALL_OBJECTS 
+WHERE object_type = 'INDEX'
+AND rownum <50
+
+SELECT * FROM ALL_OBJECTS 
+WHERE object_type = 'INDEX'
+AND lower(object_name) = 'emp_name_idx'
+AND rownum <50
+
+---------------------------------------------------------------------------------------------------------------------------- 
+
+3. Synonym
+A synonym is an alternative name for objects such as tables, views, sequences, stored procedures, and other database objects.
+Use synonyms when you are granting access to an object from another schema and you don't want the users to have to worry about knowing which schema owns the object.
+
+      - Create Synonym (or Replace) -
+      A. Syntax
+      CREATE [OR REPLACE] [PUBLIC] SYNONYM [schema .] synonym_name
+        FOR [schema .] object_name [@ dblink];
+      OR REPLACE - Allows you to recreate the synonym (if it already exists) without having to issue a DROP synonym command.
+      PUBLIC - It means that the synonym is a public synonym and is accessible to all users. Remember though that the user must first have the appropriate privileges to the object to use the synonym.
+      schema - The appropriate schema. If this phrase is omitted, Oracle assumes that you are referring to your own schema.
+      object_name - The name of the object for which you are creating the synonym. It can be one of the following:
+      table 
+              view
+              sequence 
+              stored procedure
+              function
+              package
+              materialized view
+              java class schema object
+              user-defined object
+              synonym
+
+      B. Example
+      CREATE PUBLIC SYNONYM suppliers
+      FOR app.suppliers;
+      - This first CREATE SYNONYM example demonstrates how to create a synonym called suppliers. Now, users of other schemas can reference the table called suppliers without having to prefix the table name with the schema named app. For example:
+      SELECT *
+      FROM suppliers;
+
+      If this synonym already existed and you wanted to redefine it, you could always use the OR REPLACE phrase as follows:
+      CREATE OR REPLACE PUBLIC SYNONYM suppliers
+      FOR app.suppliers;
+      
+      CREATE SYNONYM emp_table
+      FOR employees
+
+      SELECT * FROM emp_table 
+      SELECT * FROM employees
+      ***Above two Queries yield the same result.
+
+      - Drop synonym -
+      A. Syntax
+      DROP [PUBLIC] SYNONYM [schema .] synonym_name [force];
+      PUBLIC - Allows you to drop a public synonym. If you have specified PUBLIC, then you don't specify a schema.
+      force - It will force Oracle to drop the synonym even if it has dependencies. It is probably not a good idea to use force as it can cause invalidation of Oracle objects.
+
+      B. Example
+      DROP PUBLIC SYNONYM suppliers;
