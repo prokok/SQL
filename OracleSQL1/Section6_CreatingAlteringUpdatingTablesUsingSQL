@@ -1,6 +1,12 @@
 https://www.techonthenet.com/oracle/index.php 
 
 Primary Key
+CREATE TABLE
+
+INSERT INTO
+***COMMIT; After inserting or deleting the data, we need to EXPLICITLY COMMIT; the data to the database
+          in some cases depending on the database system
+
 
 ========================================================================================================================
 1. Primary KEY
@@ -129,3 +135,194 @@ Primary Key
     ALTER TABLE supplier
     ENABLE CONSTRAINT supplier_pk;
     - In this example, we're enabling a primary key on the supplier table called supplier_pk.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+2. CREATE TABLE
+    The CREATE TABLE statement is used to create a new table in a database.
+    
+    A. Syntax
+    CREATE TABLE table_name (
+        column1 datatype,
+        column2 datatype,
+        column3 datatype,
+       ....
+    );
+    The column parameters specify the names of the columns of the table.
+    The datatype parameter specifies the type of data the column can hold (e.g. varchar, integer, date, etc.).
+    ***Tip: For an overview of the available data types, go to our complete Data Types Reference.
+    
+    -Create Table Using Another Table-
+    A copy of an existing table can be created using a combination of the CREATE TABLE statement and the SELECT statement.
+    The new table gets the same column definitions. All columns or specific columns can be selected.
+    If you create a new table using an existing table, the new table will be filled with the existing values from the old table.
+    
+    CREATE TABLE new_table_name AS
+        SELECT column1, column2,...
+        FROM existing_table_name
+        WHERE ....;
+    
+    SELECT * INTO newtable
+    FROM oldtable
+    WHERE 1 = 0;
+    ***Tip: SELECT INTO can also be used to create a new, empty table using the schema of another. Just add a WHERE clause that causes the query to return no data:
+    
+    B. Examples
+    CREATE TABLE Persons (
+        PersonID int,
+        LastName varchar(255),
+        FirstName varchar(255),
+        Address varchar(255),
+        City varchar(255)
+    );
+    
+    
+2. CREATE TABLE
+          CREATE TABLE statement allows you to create and define a table.
+
+          A. Syntax
+          CREATE TABLE table_name
+          ( 
+            column1 datatype [ NULL | NOT NULL ],
+            column2 datatype [ NULL | NOT NULL ],
+            ...
+            column_n datatype [ NULL | NOT NULL ]
+          );
+          table_name - The name of the table that you wish to create.
+          column1, column2, ... column_n - The columns that you wish to create in the table. Each column must have a datatype. The column should either be defined as "null" or "not null" and if this value is left blank, the database assumes "null" as the default.
+
+          B. Example
+          CREATE TABLE customers
+          ( customer_id number(10) NOT NULL,
+            customer_name varchar2(50) NOT NULL,
+            city varchar2(50)
+          );
+          - The first column is called customer_id which is created as a number datatype (maximum 10 digits in length) and can not contain null values.
+          - The second column is called customer_name which is a varchar2 datatype (50 maximum characters in length) and also can not contain null values.
+          - The third column is called city which is a varchar2 datatype but can contain null values.
+          - Now the only problem with this Oracle CREATE TABLE statement is that you have not defined a primary key for the table. We could modify this CREATE TABLE statement and define the customer_id as the primary key as follows:
+
+          CREATE TABLE employees
+          ( employee_number number(10) NOT NULL,
+            employee_name varchar2(50) NOT NULL,
+            department_id number(10),
+            salary number(6),
+            CONSTRAINT employees_pk PRIMARY KEY (employee_number),
+            CONSTRAINT fk_departments
+              FOREIGN KEY (department_id)
+              REFERENCES departments(department_id)
+          );
+
+========================================================================================================================
+
+1. INSERT INTO
+The INSERT INTO statement is used to insert new records in a table.
+
+A. Syntax
+INSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...);
+INSERT INTO table_name VALUES (value1, value2, value3, ...);
+*** If you are adding values for all the columns of the table, you do not need to specify the column names in the SQL query.
+However, make sure the order of the values is in the same order as the columns in the table. The INSERT INTO syntax would be as follows:
+
+
+B. Examples
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country) VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+*** The CustomerID column is an auto-increment field and will be generated automatically when a new record is inserted into the table.
+INSERT INTO Customers (CustomerName, City, Country) VALUES ('Cardinal', 'Stavanger', 'Norway');
+*** Insert Data Only in Specified Columns. It is also possible to only insert data in specific columns.The following SQL statement will insert a new record, but only insert data in the "CustomerName", "City", and "Country" columns (CustomerID will be updated automatically):
+
+1. INSERT INTO
+        INSERT statement is used to insert a single record or multiple records into a table in Oracle.
+
+        A. Syntax
+        INSERT INTO table
+        (column1, column2, ... column_n )
+        VALUES
+        (expression1, expression2, ... expression_n );
+
+        Or the syntax for the Oracle INSERT statement when inserting multiple records using a SELECT statement is:
+
+        INSERT INTO table
+        (column1, column2, ... column_n )
+        SELECT expression1, expression2, ... expression_n
+        FROM source_table
+        [WHERE conditions];
+
+        table - The table to insert the records into.
+        column1, column2, ... column_n - The columns in the table to insert values.
+        expression1, expression2, ... expression_n - The values to assign to the columns in the table. So column1 would be assigned the value of expression1, column2 would be assigned the value of expression2, and so on.
+        source_table - The source table when inserting data from another table.
+        WHERE conditions - Optional. The conditions that must be met for the records to be inserted.
+        ***When inserting records into a table using the Oracle INSERT statement, you must provide a value for every NOT NULL column.
+        ***You can omit a column from the Oracle INSERT statement if the column allows NULL values.
+
+        B. Example - Using VALUES keyword
+        INSERT INTO suppliers
+        (supplier_id, supplier_name)
+        VALUES
+        (5000, 'Apple');
+        - This Oracle INSERT statement would result in one record being inserted into the suppliers table. This new record would have a supplier_id of 5000 and a supplier_name of 'Apple'.
+
+        INSERT INTO suppliers
+        (supplier_id, supplier_name)
+        SELECT account_no, name
+        FROM customers
+        WHERE customer_id > 5000;
+        - By placing a SELECT statement within the INSERT statement, you can perform multiples inserts quickly.
+
+        Frequently Asked Questions
+
+        Question: I am setting up a database with clients. I know that you use the Oracle INSERT statement to insert information in the database, but how do I make sure that I do not enter the same client information again?
+        Answer: You can make sure that you do not insert duplicate information by using the EXISTS condition.
+        For example, if you had a table named clients with a primary key of client_id, you could use the following Oracle INSERT statement:
+        INSERT INTO clients
+        (client_id, client_name, client_type)
+        SELECT supplier_id, supplier_name, 'advertising'
+        FROM suppliers
+        WHERE NOT EXISTS (SELECT *
+                          FROM clients
+                          WHERE clients.client_id = suppliers.supplier_id);
+        This Oracle INSERT statement inserts multiple records with a subselect.
+
+
+        If you wanted to insert a single record, you could use the following Oracle INSERT statement:
+        INSERT INTO clients
+        (client_id, client_name, client_type)
+        SELECT 10345, 'IBM', 'advertising'
+        FROM dual
+        WHERE NOT EXISTS (SELECT *
+                          FROM clients
+                          WHERE clients.client_id = 10345);
+        The use of the dual table allows you to enter your values in a select statement, even though the values are not currently stored in a table.
+
+
+        Question: How can I insert multiple rows of explicit data in one INSERT command in Oracle?
+        Answer: The following is an example of how you might insert 3 rows into the suppliers table in Oracle, using an Oracle INSERT statement:
+        INSERT ALL
+          INTO suppliers (supplier_id, supplier_name) VALUES (1000, 'IBM')
+          INTO suppliers (supplier_id, supplier_name) VALUES (2000, 'Microsoft')
+          INTO suppliers (supplier_id, supplier_name) VALUES (3000, 'Google')
+        SELECT * FROM dual;
+        ***SELECT * FROM dual; Does not mean anything here, it is just ORACLE Specific Syntax
+        
+        
+        The following Oracle INSERT statement would insert this record into the employees table:
+        INSERT INTO contacts
+        (contact_id, last_name, first_name, address)
+        VALUES
+        (1000, 'Smith', 'Jane', '10 Somewhere St.');
+        
+        The following Oracle INSERT statement would insert this record into the suppliers table:
+        INSERT INTO contacts
+        (contact_id, last_name, first_name, address, city, state, zip_code)
+        SELECT customer_id, last_name, first_name, address, city, state, zip_code
+        FROM customers
+        WHERE state = 'Florida';
+        - Since the number of fields in the contacts and customers table are the same and the fields are listed in the same order, you could write the solution as follows (though it is generally better practice to list the column names in case the table definitions change):
+
+        INSERT INTO contacts
+        SELECT *
+        FROM customers
+        WHERE state = 'Florida';
+
+========================================================================================================================
