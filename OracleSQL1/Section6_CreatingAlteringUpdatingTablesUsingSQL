@@ -19,7 +19,7 @@ DROP TABLE ~ DROP IT FROM DATABASE
 Foreign Key ~ Reference of primary key in the other table
 
 INDEXES
-***Restoring Deleted TABLE
+***Restoring Dropped TABLE
 alter table table_name enable row movement;
 flashback table table_name to timestamp systimestamp - interval '1' hour;
 
@@ -27,6 +27,11 @@ rowid
 System Tables
 SYNONYM
 
+VIEWs
+Exploring Objects in Oracle Database
+UNION
+UNION ALL
+MINUS
 ========================================================================================================================
 
 1. CREATE TABLE
@@ -987,6 +992,19 @@ WHERE object_type = 'INDEX'
 AND lower(object_name) = 'emp_name_idx'
 AND rownum <50
 
+***Finding Views in SQL_PHILHOON
+SELECT * FROM all_objects
+WHERE OWNER = 'SQL_PHILHOON'
+AND object_type = 'VIEW'
+
+***Fiding Views in all   database
+SELECT * FROM all_objects
+WHERE object_type = 'VIEW'
+AND rownum <10 
+
+***Gives information about our database
+SELECT * FROM sys.V_$VERSION
+
 ---------------------------------------------------------------------------------------------------------------------------- 
 
 3. Synonym
@@ -1038,3 +1056,307 @@ Use synonyms when you are granting access to an object from another schema and y
 
       B. Example
       DROP PUBLIC SYNONYM suppliers;
+
+========================================================================================================================
+1. VIEWs
+          -1-1. CREATE VIEW-
+
+          In SQL, a view is a virtual table based on the result-set of an SQL statement.
+          A view contains rows and columns, just like a real table. The fields in a view are fields from one or more real tables in the database.
+          You can add SQL functions, WHERE, and JOIN statements to a view and present the data as if the data were coming from one single table.
+
+          A. Syntax
+          CREATE VIEW view_name AS
+          SELECT column1, column2, ...
+          FROM table_name
+          WHERE condition;
+          ***Note: A view always shows up-to-date data! The database engine recreates the data, using the view's SQL statement, every time a user queries a view.
+
+          B. Examples
+          If you have the Northwind database you can see that it has several views installed by default.
+          The view "Current Product List" lists all active products (products that are not discontinued) from the "Products" table. The view is created with the following SQL:
+
+          CREATE VIEW [Current Product List] AS
+          SELECT ProductID, ProductName
+          FROM Products
+          WHERE Discontinued = No;
+
+          Then, we can query the view as follows:
+          SELECT * FROM [Current Product List];
+
+          Another view in the Northwind sample database selects every product in the "Products" table with a unit price higher than the average unit price:
+
+          CREATE VIEW [Products Above Average Price] AS
+          SELECT ProductName, UnitPrice
+          FROM Products
+          WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products);
+
+          We can query the view above as follows:
+          SELECT * FROM [Products Above Average Price];
+
+          Another view in the Northwind database calculates the total sale for each category in 1997. Note that this view selects its data from another view called "Product Sales for 1997":
+          CREATE VIEW [Category Sales For 1997] AS
+          SELECT DISTINCT CategoryName, Sum(ProductSales) AS CategorySales
+          FROM [Product Sales for 1997]
+          GROUP BY CategoryName;
+
+          We can query the view above as follows:
+          SELECT * FROM [Category Sales For 1997];
+
+          We can also add a condition to the query. Let's see the total sale only for the category "Beverages":
+          SELECT * FROM [Category Sales For 1997]
+          WHERE CategoryName = 'Beverages';
+
+
+          -1-2. CREATE OR REPLACE VIEW-
+          You can update a view by using the following syntax:
+
+          A. Syntax
+          CREATE OR REPLACE VIEW view_name AS
+          SELECT column1, column2, ...
+          FROM table_name
+          WHERE condition;
+
+          B. Example
+          Now we want to add the "Category" column to the "Current Product List" view. We will update the view with the following SQL:
+          CREATE OR REPLACE VIEW [Current Product List] AS
+          SELECT ProductID, ProductName, Category
+          FROM Products
+          WHERE Discontinued = No;
+
+
+          -1-3. DROP VIEW-
+          You can delete a view with the DROP VIEW command.
+
+          A. Syntax
+          SQL DROP VIEW Syntax
+          DROP VIEW view_name;
+
+      
+1. VIEW
+- An Oracle VIEW, in essence, is a virtual table that does not physically exist. Rather, it is created by a query joining one or more tables.
+
+      - Create VIEW -
+      A. Syntax
+      CREATE VIEW view_name AS
+        SELECT columns
+        FROM tables
+        [WHERE conditions];
+      view_name - The name of the Oracle VIEW that you wish to create.
+      WHERE conditions - Optional. The conditions that must be met for the records to be included in the VIEW.
+
+      B. Example
+      CREATE VIEW sup_orders AS
+        SELECT suppliers.supplier_id, orders.quantity, orders.price
+        FROM suppliers
+        INNER JOIN orders
+        ON suppliers.supplier_id = orders.supplier_id
+        WHERE suppliers.supplier_name = 'Microsoft';
+      This Oracle CREATE VIEW example would create a virtual table based on the result set of the SELECT statement. You can now query the Oracle VIEW as follows:
+
+      SELECT *
+      FROM sup_orders;
+
+
+      - Update VIEW -
+      You can modify the definition of an Oracle VIEW without dropping it by using the Oracle CREATE OR REPLACE VIEW Statement.
+      A. Syntax
+      CREATE OR REPLACE VIEW view_name AS
+        SELECT columns
+        FROM table
+        WHERE conditions;
+      view_name - The name of the Oracle VIEW that you wish to create or replace.
+
+      B. Example
+      CREATE or REPLACE VIEW sup_orders AS
+        SELECT suppliers.supplier_id, orders.quantity, orders.price
+        FROM suppliers
+        INNER JOIN orders
+        ON suppliers.supplier_id = orders.supplier_id
+        WHERE suppliers.supplier_name = 'Apple';
+      - This Oracle CREATE OR REPLACE VIEW example would update the definition of the Oracle VIEW called sup_orders without dropping it. If the Oracle VIEW did not yet exist, the VIEW would merely be created for the first time.
+
+
+      - Drop VIEW- 
+      A. Syntax
+      DROP VIEW view_name;
+      view_name - The name of the view that you wish to drop.
+
+      B. Example
+      DROP VIEW sup_orders;
+
+      Question: Can you update the data in an Oracle VIEW?
+      Answer: A VIEW in Oracle is created by joining one or more tables. When you update record(s) in a VIEW, it updates the records in the underlying tables that make up the View. So, yes, you can update the data in an Oracle VIEW providing you have the proper privileges to the underlying Oracle tables.
+
+      Question: Does the Oracle View exist if the table is dropped from the database?
+      Answer: Yes, in Oracle, the VIEW continues to exist even after one of the tables (that the Oracle VIEW is based on) is dropped from the database. However, if you try to query the Oracle VIEW after the table has been dropped, you will receive a message indicating that the Oracle VIEW has errors. If you recreate the table (the table that you had dropped), the Oracle VIEW will again be fine.
+
+****Excercise***
+
+CREATE OR REPLACE VIEW high AS
+SELECT e.*
+FROM employees e, (SELECT store_id, max(sal) as high FROM employees GROUP BY store_id) s
+WHERE s.store_id = e.store_id 
+AND s.high = e.sal
+AND e.ename != 'FORD'
+
+
+CREATE VIEW super_employees AS
+SELECT e1.* FROM employees e1 
+INNER JOIN 
+  (SELECT store_id, max(sal) sal FROM employees GROUP BY store_id) e2
+ON e1.store_id = e2.store_id 
+   AND e1.sal = e2.sal 
+WHERE ename != 'FORD'
+
+ABOVE two Views: high, super_employees yields the same result
+
+
+---------------------------------------------------------------------------------------------------------------------------- 
+      
+2. Exploring Objects in Oracle Database
+
+***Finding Views in SQL_PHILHOON
+SELECT * FROM all_objects
+WHERE OWNER = 'SQL_PHILHOON'
+AND object_type = 'VIEW'
+
+***Fiding Views in all   database
+SELECT * FROM all_objects
+WHERE object_type = 'VIEW'
+AND rownum <10 
+
+***Gives information about our database
+SELECT * FROM sys.V_$VERSION
+
+---------------------------------------------------------------------------------------------------------------------------- 
+
+3. UNION Operator
+The UNION operator is used to combine the result-set of two or more SELECT statements.
+* Each SELECT statement within UNION must have the same number of columns
+* The columns must also have similar data types
+* The columns in each SELECT statement must also be in the same order
+
+A. Syntax
+SELECT column_name(s) FROM table1 UNION SELECT column_name(s) FROM table2;
+SELECT column_name(s) FROM table1 UNION ALL SELECT column_name(s) FROM table2;
+***The UNION operator selects only distinct values by default. To allow duplicate values, use UNION ALL:
+***Note: The column names in the result-set are usually equal to the column names in the first SELECT statement in the UNION.
+
+B. Examples
+SELECT City FROM Customers UNION SELECT City FROM Suppliers ORDER BY City;
+SELECT City FROM Customers UNION ALL SELECT City FROM Suppliers ORDER BY City;
+SELECT City, Country FROM Customers WHERE Country='Germany' UNION SELECT City, Country FROM Suppliers WHERE Country='Germany' ORDER BY City;
+SELECT City, Country FROM Customers WHERE Country='Germany' UNION ALL SELECT City, Country FROM Suppliers WHERE Country='Germany' ORDER BY City;
+SELECT 'Customer' As Type, ContactName, City, Country FROM Customers UNION SELECT 'Supplier', ContactName, City, Country FROM Suppliers;
+
+3. UNION
+-Combine the result sets of 2 or more Oracle SELECT statements. It removes duplicate rows between the various SELECT statements.
+-Each SELECT statement within the UNION operator must have the same number of fields in the result sets with similar data types.
+
+      A. Syntax
+
+      SELECT expression1, expression2, ... expression_n
+      FROM tables
+      [WHERE conditions]
+      UNION
+      SELECT expression1, expression2, ... expression_n
+      FROM tables
+      [WHERE conditions];
+      expression1, expression2, expression_n - The columns or calculations that you wish to retrieve.
+      tables - The tables that you wish to retrieve records from. There must be at least one table listed in the FROM clause.
+      WHERE conditions - Optional. The conditions that must be met for the records to be selected.
+      ***There must be same number of expressions in both SELECT statements.
+
+      B. Examples
+
+      SELECT supplier_id
+      FROM suppliers
+      UNION
+      SELECT supplier_id
+      FROM order_details;
+      ***In this Oracle UNION operator example, if a supplier_id appeared in both the suppliers and order_details table, it would appear once in your result set. The Oracle UNION operator removes duplicates. If you do not wish to remove duplicates, try using the Oracle UNION ALL operator.
+
+      SELECT supplier_id, supplier_name
+      FROM suppliers
+      WHERE supplier_id <= 500
+      UNION
+      SELECT company_id, company_name
+      FROM companies
+      WHERE company_name = 'Apple'
+      ORDER BY 2;
+      ***In this Oracle UNION operator, since the column names are different between the two SELECT statements, it is more advantageous to reference the columns in the ORDER BY clause by their position in the result set. In this example, we've sorted the results by supplier_name / company_name in ascending order, as denoted by the ORDER BY 2. The supplier_name / company_name fields are in position #2 in the result set.
+
+---------------------------------------------------------------------------------------------------------------------------- 
+      
+4. UNION ALL
+      - Combine the result sets of 2 or more SELECT statements. It returns all rows from the query and it does not remove duplicate rows between the various SELECT statements.
+      - Each SELECT statement within the Oracle UNION ALL operator must have the same number of fields in the result sets with similar data types.
+
+      A. Syntax
+      SELECT expression1, expression2, ... expression_n
+      FROM tables
+      [WHERE conditions]
+      UNION ALL
+      SELECT expression1, expression2, ... expression_n
+      FROM tables
+      [WHERE conditions];
+      expression1, expression2, ... expression_n - The columns or calculations that you wish to retrieve.
+      tables - The tables that you wish to retrieve records from. There must be at least one table listed in the FROM clause.
+      WHERE conditions - Optional. The conditions that must be met for the records to be selected.
+      ***There must be same number of expressions in both SELECT statements.
+
+      B. Example 
+      SELECT supplier_id
+      FROM suppliers
+      UNION ALL
+      SELECT supplier_id
+      FROM orders;
+      -This Oracle UNION ALL operator would return a supplier_id multiple times in your result set if the supplier_id appeared in both the suppliers and orders table. The Oracle UNION ALL operator does not remove duplicates. If you wish to remove duplicates, try using the Oracle UNION operator.
+
+      SELECT supplier_id, supplier_name
+      FROM suppliers
+      WHERE state = 'California'
+      UNION ALL
+      SELECT company_id, company_name
+      FROM companies
+      WHERE company_id > 1000
+      ORDER BY 2;
+      - In this Oracle UNION ALL operator, since the column names are different between the two SELECT statements, it is more advantageous to reference the columns in the ORDER BY clause by their position in the result set. In this example, we've sorted the results by supplier_name / company_name in ascending order, as denoted by the ORDER BY 2. The supplier_name / company_name fields are in position #2 in the result set.
+
+---------------------------------------------------------------------------------------------------------------------------- 
+            
+5. MINUS
+      - Return all rows in the first SELECT statement that are not returned by the second SELECT statement. Each SELECT statement will define a dataset. The MINUS operator will retrieve all records from the first dataset and then remove from the results all records from the second dataset.
+      - Each SELECT statement within the MINUS query must have the same number of fields in the result sets with similar data types.
+
+      A. Syntax
+      SELECT expression1, expression2, ... expression_n
+      FROM tables
+      [WHERE conditions]
+      MINUS
+      SELECT expression1, expression2, ... expression_n
+      FROM tables
+      [WHERE conditions];
+      expression1, expression2, ... expression_n - The columns or calculations that you wish to retrieve.
+      tables - The tables that you wish to retrieve records from. There must be at least one table listed in the FROM clause.
+      WHERE conditions - Optional. The conditions that must be met for the records to be selected.
+      ***There must be same number of expressions in both SELECT statements and have similar data types.
+
+      B. Example
+      SELECT supplier_id
+      FROM suppliers
+      MINUS
+      SELECT supplier_id
+      FROM orders;
+      - This Oracle MINUS example returns all supplier_id values that are in the suppliers table and not in the orders table. What this means is that if a supplier_id value existed in the suppliers table and also existed in the orders table, the supplier_id value would not appear in this result set.
+
+      SELECT supplier_id, supplier_name
+      FROM suppliers
+      WHERE state = 'Florida'
+      MINUS
+      SELECT company_id, company_name
+      FROM companies
+      WHERE company_id <= 400
+      ORDER BY 2;
+      - In this MINUS example, since the column names are different between the two SELECT statements, it is more advantageous to reference the columns in the ORDER BY clause by their position in the result set. In this example, we've sorted the results by supplier_name / company_name in ascending order, as denoted by the ORDER BY 2. The supplier_name / company_name fields are in position #2 in the result set.
