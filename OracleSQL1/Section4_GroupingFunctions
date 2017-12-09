@@ -1,8 +1,11 @@
+https://www.techonthenet.com/oracle/index.php 
+
 Grouping Functions
 - Act on multiple rows and gives a single value
 - USED WITH GROUP BY AND HAVING CLUASE
 
 FUNCTIONS : MAX, MIN, SUM, AVG, COUNT
+
 GROUP BY, HAVING FUNCTIONS
 ***WE CANNOT USE GROUP FUNCTIONS IN THE WHERE CLAUSE
 
@@ -16,9 +19,9 @@ GROUP BY, HAVING FUNCTIONS
 ---
 6) ORDER BY expression
 ---
-
-
-https://www.techonthenet.com/oracle/index.php 
+***expression1, expression2, ... expression_n - The expressions that are not encapsulated within an aggregate function and must be included in the GROUP BY clause.
+***SELECT CLAUSE does not have to include all the expressions_n or columns in GROUP BY clause
+***GROUP BY CLUASE MUST HAVE The expressions that are not encapsulated within an aggregate function
 
 ==============================================================================================================================================
 -----------------------------------------------------------------------------------------------------------------------------------
@@ -118,6 +121,19 @@ COUNT(*)	JOB
 3       	MANAGER
 2	        ANALYST
 
+SELECT JOB, DEPTNO, COUNT(*)
+FROM EMP
+GROUP BY JOB, DEPTNO
+ORDER BY DEPTNO ASC
+JOB	      DEPTNO   COUNT(*)
+CLERK	    10	     1
+MANAGER	  10       1
+PRESIDENT	10	     1
+ANALYST	  20	     2
+CLERK	    20	     2
+MANAGER	  20	     1
+***JOB AND DEPTNO together CREATES A GROUP
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 2. HAVING
@@ -187,3 +203,19 @@ SELECT department, MAX(salary) AS "Highest salary"
 FROM employees
 GROUP BY department
 HAVING MAX(salary) > 45000;
+
+SELECT DEPTNO, COUNT(*)
+FROM EMP
+GROUP BY DEPTNO
+HAVING COUNT(*) > 3
+DEPTNO	COUNT(*)
+30	    6
+20      5
+
+SELECT DEPTNO
+FROM EMP
+GROUP BY DEPTNO
+HAVING COUNT(*) > 3
+DEPTNO
+30
+20
